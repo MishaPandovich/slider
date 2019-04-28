@@ -1,5 +1,8 @@
-class Model {
+import Observer from './Observer';
+
+class Model extends Observer {
   constructor(options) {
+    super();
     this.max = options.max,
     this.value = options.value,
     this.step = options.step
@@ -30,6 +33,8 @@ class Model {
     }
 
     this.pixelsWithStep = Math.round(value / this.step / ratio) * this.step;
+
+    this.publish('changeValue');
   }
 }
 
