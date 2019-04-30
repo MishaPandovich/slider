@@ -2,12 +2,13 @@ import Model from './components/Model';
 import View from './components/View';
 import Controller from './components/Controller';
 
-(function() {
-  function mySlider(options={}) {
-    options.max = options.max || 100;
-    options.value = options.value || 0;
-    options.step = options.step || 1;
-    options.slider = options.slider || 'slider1';
+(function($) {
+  $.fn.mySlider = function(options={}) {
+    options = $.extend({
+      max: 100,
+      value: 0,
+      step: 1
+    }, options);
 
     const sliderOptions = {
       max: options.max,
@@ -16,7 +17,7 @@ import Controller from './components/Controller';
     };
 
     const model = new Model(sliderOptions);
-    const view = new View(document.getElementById(options.slider));
+    const view = new View(this);
     const controller = new Controller(model, view);
 
     model.subscribe('changeValue', controller.changeValue.bind(controller));
@@ -24,6 +25,4 @@ import Controller from './components/Controller';
 
     controller.initPlugin();
   }
-
-  window.mySlider = mySlider;
-})();
+})(jQuery);

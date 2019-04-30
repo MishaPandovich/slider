@@ -1,16 +1,14 @@
 import './main.scss';
 import './js/slider.js';
 
-new mySlider({
+$('#slider1').mySlider({
   max: 100,
   value: 20,
-  step: 5,
-  slider: 'slider1'
+  step: 5
 });
 
-new mySlider({
+$('#slider2').mySlider({
   max: 100,
   value: 35,
-  step: 15,
-  slider: 'slider2'
+  step: 15
 });
