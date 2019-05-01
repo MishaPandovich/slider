@@ -12,6 +12,7 @@ class View extends Observer {
   initEventListeners() {
     this.elem.on('dragstart', this.preventDefault);
     this.elem.on('mousedown', this.onElemMouseDown.bind(this));
+    this.button.on('click', this.buttonClick.bind(this));
   }
 
   viewValue(value, pixelsPerValue) {
@@ -35,6 +36,10 @@ class View extends Observer {
   onElemMouseDown(e) {
     this.startDrag(e.clientX, e.clientY);
     return false;
+  }
+
+  buttonClick() {
+    this.publish('buttonClick');
   }
 
   documentMouseMove(e) {

@@ -15,6 +15,11 @@ class Controller {
     this.model.setValue(moveTo, true);
   }
 
+  onButtonClick() {
+    let moveTo = this.model.moveTo(+this.view.change.val());
+    this.model.setValue(moveTo);
+  }
+
   changeValue() {
     this.view.viewValue(this.model.pixelsWithStep, this.model.pixelsPerValue);
   }

@@ -21,6 +21,7 @@ import Controller from './components/Controller';
     const controller = new Controller(model, view);
 
     model.subscribe('changeValue', controller.changeValue.bind(controller));
+    view.subscribe('buttonClick', controller.onButtonClick.bind(controller));
     view.subscribe('documentMouseMove', controller.onDocumentMouseMove.bind(controller));
 
     controller.initPlugin();

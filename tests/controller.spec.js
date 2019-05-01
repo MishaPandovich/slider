@@ -16,6 +16,7 @@ describe('Тесты для контроллера', function() {
     const controller = new Controller(model, view);
 
     model.subscribe('changeValue', controller.changeValue.bind(controller));
+    view.subscribe('buttonClick', controller.onButtonClick.bind(controller));
     view.subscribe('documentMouseMove', controller.onDocumentMouseMove.bind(controller));
 
     controller.initPlugin();
@@ -50,6 +51,14 @@ describe('Тесты для контроллера', function() {
     expect(model.pixelsWithStep).toBe(85);
     expect(view.thumbElem.css('left')).toBe('255px');
     expect(view.change.val()).toBe('85');
+  });
+
+  it('onButtonClick', function() {
+    view.change.val('52');
+    controller.onButtonClick();
+    expect(model.pixelsWithStep).toBe(50);
+    expect(view.thumbElem.css('left')).toBe('150px');
+    expect(view.change.val()).toBe('50');
   });
 
   it('changeValue', function() {

@@ -16,6 +16,7 @@ describe('Тесты для вью', function() {
     const controller = new Controller(model, view);
 
     model.subscribe('changeValue', controller.changeValue.bind(controller));
+    view.subscribe('buttonClick', controller.onButtonClick.bind(controller));
     view.subscribe('documentMouseMove', controller.onDocumentMouseMove.bind(controller));
 
     controller.initPlugin();
@@ -37,8 +38,10 @@ describe('Тесты для вью', function() {
     view.initEventListeners();
     view.elem.trigger('dragstart');
     view.elem.mousedown();
+    view.button.click();
     expect($._data(view.elem[0]).events.dragstart).toBeDefined();
     expect($._data(view.elem[0]).events.mousedown).toBeDefined();
+    expect($._data(view.button[0]).events.click).toBeDefined();
   });
 
   it('viewValue', function() {
