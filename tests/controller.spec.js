@@ -24,6 +24,13 @@ describe('Тесты для контроллера', function() {
     window.model = model;
     window.view = view;
     window.controller = controller;
+
+    spyOn(model, 'getCoords').and.callThrough();
+    spyOn(model, 'setValue').and.callThrough();
+    spyOn(model, 'moveTo').and.callThrough();
+    spyOn(view, 'initEventListeners');
+    spyOn(view, 'viewValue').and.callThrough();
+    spyOn(view, 'startDrag').and.callThrough();
   });
 
   it('constructor', function() {
@@ -36,6 +43,9 @@ describe('Тесты для контроллера', function() {
     view.thumbElem.width(30);
     model.value = 46;
     controller.initPlugin();
+    expect(model.getCoords).toHaveBeenCalledWith(500, 30);
+    expect(model.setValue).toHaveBeenCalledWith(46);
+    expect(view.initEventListeners).toHaveBeenCalled();
     expect(model.rightEdge).toBe(470);
     expect(model.pixelsPerValue).toBe(4.7);
     expect(model.pixelsWithStep).toBe(45);
@@ -43,28 +53,29 @@ describe('Тесты для контроллера', function() {
 
   it('onDocumentMouseMove', function() {
     controller.onDocumentMouseMove({ clientX: 350 });
+    expect(model.moveTo).toHaveBeenCalledWith(350);
+    expect(model.setValue).toHaveBeenCalledWith(300, true);
     expect(model.pixelsWithStep).toBe(100);
-    expect(view.thumbElem.css('left')).toBe('300px');
-    expect(view.change.val()).toBe('100');
 
     controller.onDocumentMouseMove({ clientX: 252 });
+    expect(model.moveTo).toHaveBeenCalledWith(252);
+    expect(model.setValue).toHaveBeenCalledWith(252, true);
     expect(model.pixelsWithStep).toBe(85);
-    expect(view.thumbElem.css('left')).toBe('255px');
-    expect(view.change.val()).toBe('85');
   });
 
   it('onButtonClick', function() {
     view.change.val('52');
     controller.onButtonClick();
+    expect(model.moveTo).toHaveBeenCalledWith(52);
+    expect(model.setValue).toHaveBeenCalledWith(52);
     expect(model.pixelsWithStep).toBe(50);
-    expect(view.thumbElem.css('left')).toBe('150px');
-    expect(view.change.val()).toBe('50');
   });
 
   it('changeValue', function() {
     model.pixelsWithStep = 105;
     model.pixelsPerValue = 2.2;
     controller.changeValue();
+    expect(view.viewValue).toHaveBeenCalledWith(105, 2.2);
     expect(view.thumbElem.css('left')).toBe('231px');
     expect(view.change.val()).toBe('105');
   });

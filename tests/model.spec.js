@@ -45,10 +45,13 @@ describe('Тесты для модели', function() {
   });
 
   it('setValue', function() {
-    model.setValue(12);
-    expect(model.pixelsWithStep).toBe(10);
+    spyOn(view, 'viewValue').and.callThrough();
+    model.setValue(22);
+    expect(model.pixelsWithStep).toBe(20);
+    expect(view.viewValue).toHaveBeenCalledWith(20, 3);
 
     model.setValue(23, true);
     expect(model.pixelsWithStep).toBe(10);
+    expect(view.viewValue).toHaveBeenCalledWith(10, 3);
   });
 });

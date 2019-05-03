@@ -36,9 +36,6 @@ describe('Тесты для вью', function() {
 
   it('initEventListeners', function() {
     view.initEventListeners();
-    view.elem.trigger('dragstart');
-    view.elem.mousedown();
-    view.button.click();
     expect($._data(view.elem[0]).events.dragstart).toBeDefined();
     expect($._data(view.elem[0]).events.mousedown).toBeDefined();
     expect($._data(view.button[0]).events.click).toBeDefined();
@@ -61,9 +58,22 @@ describe('Тесты для вью', function() {
   });
 
   it('onElemMouseDown', function() {
-    view.onElemMouseDown({ clientX: 120, clientY: 20 });
-    expect(view.shiftX).toBe(47);
-    expect(view.shiftY).toBe(17);
+    spyOn(view, 'startDrag');
+    let fn = view.onElemMouseDown({ clientX: 120, clientY: 20 });
+    expect(view.startDrag).toHaveBeenCalledWith(120, 20);
+    expect(fn).toBeFalsy();
+  });
+
+  it('buttonClick', function() {
+    spyOn(view, 'publish');
+    view.buttonClick();
+    expect(view.publish).toHaveBeenCalledWith('buttonClick');
+  });
+
+  it('documentMouseMove', function() {
+    spyOn(view, 'publish');
+    view.documentMouseMove({});
+    expect(view.publish).toHaveBeenCalledWith('documentMouseMove', {});
   });
 
   it('onDocumentMouseUp', function() {
