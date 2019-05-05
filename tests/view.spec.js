@@ -35,10 +35,22 @@ describe('Тесты для вью', function() {
   });
 
   it('initEventListeners', function() {
+    spyOn(view, 'preventDefault');
+    spyOn(view, 'onElemMouseDown');
+    spyOn(view, 'buttonClick');
     view.initEventListeners();
     expect($._data(view.elem[0]).events.dragstart).toBeDefined();
     expect($._data(view.elem[0]).events.mousedown).toBeDefined();
     expect($._data(view.button[0]).events.click).toBeDefined();
+
+    view.elem.trigger('dragstart');
+    expect(view.preventDefault).toHaveBeenCalled();
+
+    view.elem.mousedown();
+    expect(view.onElemMouseDown).toHaveBeenCalled();
+
+    view.button.click();
+    expect(view.buttonClick).toHaveBeenCalled();
   });
 
   it('viewValue', function() {
@@ -48,9 +60,20 @@ describe('Тесты для вью', function() {
   });
 
   it('startDrag', function() {
+    spyOn(view, 'documentMouseMove').and.callThrough();
+    spyOn(view, 'onDocumentMouseUp').and.callThrough();
     view.startDrag(108, 18);
     expect(view.shiftX).toBe(35);
     expect(view.shiftY).toBe(15);
+
+    $(document).mousemove();
+    expect(view.documentMouseMove).toHaveBeenCalled();
+    expect($._data(document).events.mousemove).toBeDefined();
+    expect($._data(document).events.mouseup).toBeDefined();
+
+    $(document).mouseup();
+    expect(view.onDocumentMouseUp).toHaveBeenCalled();
+    expect($._data(document).events).not.toBeDefined();
   });
 
   it('preventDefault', function() {
