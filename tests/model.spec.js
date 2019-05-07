@@ -7,8 +7,9 @@ describe('Тесты для модели', function() {
     setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div><input class="slider__change"><button class="slider__button">Изменить</button></div>');
 
     const sliderOptions = {
+      min: 9,
       max: 100,
-      value: 20,
+      current: 20,
       step: 5
     };
     const model = new Model(sliderOptions);
@@ -27,8 +28,9 @@ describe('Тесты для модели', function() {
   });
 
   it('constructor', function() {
+    expect(model.min).toBe(10);
     expect(model.max).toBe(100);
-    expect(model.value).toBe(20);
+    expect(model.current).toBe(20);
     expect(model.step).toBe(5);
     expect(model.subscribers.any).toBeDefined();
   });
@@ -36,22 +38,22 @@ describe('Тесты для модели', function() {
   it('getCoords', function() {
     model.getCoords(400, 20);
     expect(model.rightEdge).toBe(380);
-    expect(model.pixelsPerValue).toBe(3.8);
+    expect(model.pixelsPerValue).toBe(4.222222222222222);
   });
 
   it('moveTo', function() {
-    expect(model.moveTo(-10)).toBe(0);
-    expect(model.moveTo(310)).toBe(300);
+    expect(model.moveTo(-10)).toBe(10);
+    expect(model.moveTo(110)).toBe(100);
   });
 
   it('setValue', function() {
     spyOn(view, 'viewValue').and.callThrough();
     model.setValue(22);
-    expect(model.pixelsWithStep).toBe(20);
-    expect(view.viewValue).toHaveBeenCalledWith(20, 3);
+    expect(model.calcValue).toBe(20);
+    expect(view.viewValue).toHaveBeenCalledWith(20, 10, 3.3333333333333335);
 
     model.setValue(23, true);
-    expect(model.pixelsWithStep).toBe(10);
-    expect(view.viewValue).toHaveBeenCalledWith(10, 3);
+    expect(model.calcValue).toBe(10);
+    expect(view.viewValue).toHaveBeenCalledWith(10, 10, 3.3333333333333335);
   });
 });

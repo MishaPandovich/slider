@@ -3,23 +3,24 @@ import Observer from './Observer';
 class Model extends Observer {
   constructor(options) {
     super();
+    this.min = Math.round(options.min / options.step) * options.step,
     this.max = options.max,
-    this.value = options.value,
-    this.step = options.step
+    this.current = options.current > options.max ? options.max : options.current,
+    this.step = options.step >= 1 ? options.step : 1
   }
 
   getCoords(elemWidth, thumbElemWidth) {
     this.rightEdge = elemWidth - thumbElemWidth;
-    this.pixelsPerValue = this.rightEdge / this.max;
+    this.pixelsPerValue = this.rightEdge / (this.max - this.min);
   }
 
   moveTo(newLeft) {
-    if (newLeft < 0) {
-      newLeft = 0;
+    if (newLeft < this.min) {
+      newLeft = this.min;
     }
 
-    if (newLeft > this.rightEdge) {
-      newLeft = this.rightEdge;
+    if (newLeft > this.max) {
+      newLeft = this.max;
     }
 
     return newLeft;
@@ -32,7 +33,7 @@ class Model extends Observer {
       ratio = this.pixelsPerValue;
     }
 
-    this.pixelsWithStep = Math.round(value / this.step / ratio) * this.step;
+    this.calcValue = this.moveTo(Math.round(value / this.step / ratio) * this.step);
 
     this.publish('changeValue');
   }

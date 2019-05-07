@@ -7,8 +7,9 @@ describe('Тесты для вью', function() {
     setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div><input class="slider__change"><button class="slider__button">Изменить</button></div>');
 
     const sliderOptions = {
+      min: 9,
       max: 100,
-      value: 20,
+      current: 20,
       step: 5
     };
     const model = new Model(sliderOptions);
@@ -35,16 +36,11 @@ describe('Тесты для вью', function() {
   });
 
   it('initEventListeners', function() {
-    spyOn(view, 'preventDefault');
     spyOn(view, 'onElemMouseDown');
     spyOn(view, 'buttonClick');
     view.initEventListeners();
-    expect($._data(view.elem[0]).events.dragstart).toBeDefined();
     expect($._data(view.elem[0]).events.mousedown).toBeDefined();
     expect($._data(view.button[0]).events.click).toBeDefined();
-
-    view.elem.trigger('dragstart');
-    expect(view.preventDefault).toHaveBeenCalled();
 
     view.elem.mousedown();
     expect(view.onElemMouseDown).toHaveBeenCalled();
@@ -54,17 +50,16 @@ describe('Тесты для вью', function() {
   });
 
   it('viewValue', function() {
-    view.viewValue(60, 3);
-    expect(view.thumbElem.css('left')).toBe('180px');
+    view.viewValue(60, 10, 3);
+    expect(view.thumbElem.css('left')).toBe('150px');
     expect(view.change.val()).toBe('60');
   });
 
-  it('startDrag', function() {
+  it('onElemMouseDown', function() {
     spyOn(view, 'documentMouseMove').and.callThrough();
     spyOn(view, 'onDocumentMouseUp').and.callThrough();
-    view.startDrag(108, 18);
-    expect(view.shiftX).toBe(35);
-    expect(view.shiftY).toBe(15);
+    let fn = view.onElemMouseDown();
+    expect(fn).toBeFalsy();
 
     $(document).mousemove();
     expect(view.documentMouseMove).toHaveBeenCalled();
@@ -74,17 +69,6 @@ describe('Тесты для вью', function() {
     $(document).mouseup();
     expect(view.onDocumentMouseUp).toHaveBeenCalled();
     expect($._data(document).events).not.toBeDefined();
-  });
-
-  it('preventDefault', function() {
-    expect(view.preventDefault()).toBeFalsy();
-  });
-
-  it('onElemMouseDown', function() {
-    spyOn(view, 'startDrag');
-    let fn = view.onElemMouseDown({ clientX: 120, clientY: 20 });
-    expect(view.startDrag).toHaveBeenCalledWith(120, 20);
-    expect(fn).toBeFalsy();
   });
 
   it('buttonClick', function() {

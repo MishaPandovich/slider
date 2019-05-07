@@ -6,22 +6,20 @@ class Controller {
 
   initPlugin() {
     this.model.getCoords(this.view.elem.width(), this.view.thumbElem.width());
-    this.model.setValue(this.model.value);
+    this.model.setValue(this.model.current);
     this.view.initEventListeners();
   }
 
   onDocumentMouseMove(e) {
-    let moveTo = this.model.moveTo(e.clientX);
-    this.model.setValue(moveTo, true);
+    this.model.setValue(e.clientX, true);
   }
 
   onButtonClick() {
-    let moveTo = this.model.moveTo(+this.view.change.val());
-    this.model.setValue(moveTo);
+    this.model.setValue(+this.view.change.val());
   }
 
   changeValue() {
-    this.view.viewValue(this.model.pixelsWithStep, this.model.pixelsPerValue);
+    this.view.viewValue(this.model.calcValue, this.model.min, this.model.pixelsPerValue);
   }
 }
 

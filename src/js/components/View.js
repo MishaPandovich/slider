@@ -10,31 +10,18 @@ class View extends Observer {
   }
 
   initEventListeners() {
-    this.elem.on('dragstart', this.preventDefault);
     this.elem.on('mousedown', this.onElemMouseDown.bind(this));
     this.button.on('click', this.buttonClick.bind(this));
   }
 
-  viewValue(value, pixelsPerValue) {
-    this.thumbElem.css('left', value * pixelsPerValue + 'px');
-    this.change.val(value);
+  viewValue(calcValue, min, pixelsPerValue) {
+    this.thumbElem.css('left', (calcValue - min) * pixelsPerValue + 'px');
+    this.change.val(calcValue);
   }
 
-  startDrag(startClientX, startClientY) {
-    this.thumbCoords = this.thumbElem[0].getBoundingClientRect();
-    this.shiftX = startClientX - this.thumbCoords.left;
-    this.shiftY = startClientY - this.thumbCoords.top;
-
+  onElemMouseDown() {
     $(document).on('mousemove', this.documentMouseMove.bind(this));
     $(document).on('mouseup', this.onDocumentMouseUp.bind(this));
-  }
-
-  preventDefault() {
-    return false;
-  }
-
-  onElemMouseDown(e) {
-    this.startDrag(e.clientX, e.clientY);
     return false;
   }
 

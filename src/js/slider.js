@@ -5,15 +5,17 @@ import Controller from './components/Controller';
 (function($) {
   $.fn.mySlider = function(options={}) {
     options = $.extend({
+      min: 0,
       max: 100,
-      value: 0,
+      current: 0,
       step: 1
     }, options);
 
     const sliderOptions = {
+      min: options.min,
       max: options.max,
-      value: options.value > options.max ? options.max : options.value,
-      step: options.step >= 1 ? options.step : 1
+      current: options.current,
+      step: options.step
     };
 
     const model = new Model(sliderOptions);
