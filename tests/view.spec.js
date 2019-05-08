@@ -10,7 +10,8 @@ describe('Тесты для вью', function() {
       min: 9,
       max: 100,
       current: 20,
-      step: 5
+      step: 5,
+      position: 'horizontal'
     };
     const model = new Model(sliderOptions);
     const view = new View($('#slider1'));
@@ -49,9 +50,18 @@ describe('Тесты для вью', function() {
     expect(view.buttonClick).toHaveBeenCalled();
   });
 
+  it('isVertical', function() {
+    view.isVertical();
+    expect(view.elem).toHaveClass('slider__runner--vertical');
+  });
+
   it('viewValue', function() {
-    view.viewValue(60, 10, 3);
+    view.viewValue(60, 10, 3, 'horizontal');
     expect(view.thumbElem.css('left')).toBe('150px');
+    expect(view.change.val()).toBe('60');
+
+    view.viewValue(60, 10, 3, 'vertical');
+    expect(view.thumbElem.css('top')).toBe('150px');
     expect(view.change.val()).toBe('60');
   });
 

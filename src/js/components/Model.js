@@ -6,7 +6,8 @@ class Model extends Observer {
     this.min = Math.round(options.min / options.step) * options.step,
     this.max = options.max,
     this.current = options.current > options.max ? options.max : options.current,
-    this.step = options.step >= 1 ? options.step : 1
+    this.step = options.step >= 1 ? options.step : 1,
+    this.position = options.position
   }
 
   getCoords(elemWidth, thumbElemWidth) {

@@ -10,7 +10,8 @@ describe('Тесты для контроллера', function() {
       min: 9,
       max: 100,
       current: 20,
-      step: 5
+      step: 5,
+      position: 'horizontal'
     };
     const model = new Model(sliderOptions);
     const view = new View($('#slider1'));
@@ -30,6 +31,7 @@ describe('Тесты для контроллера', function() {
     spyOn(model, 'setValue').and.callThrough();
     spyOn(model, 'moveTo').and.callThrough();
     spyOn(view, 'initEventListeners');
+    spyOn(view, 'isVertical').and.callThrough();
     spyOn(view, 'viewValue').and.callThrough();
   });
 
@@ -39,13 +41,16 @@ describe('Тесты для контроллера', function() {
   });
 
   it('initPlugin', function() {
-    view.elem.width(500);
-    view.thumbElem.width(30);
+    view.elem.height(500);
+    view.thumbElem.height(30);
     model.current = 46;
+    model.position = 'vertical';
     controller.initPlugin();
+    expect(view.isVertical).toHaveBeenCalled();
     expect(model.getCoords).toHaveBeenCalledWith(500, 30);
     expect(model.setValue).toHaveBeenCalledWith(46);
     expect(view.initEventListeners).toHaveBeenCalled();
+    expect(view.elem).toHaveClass('slider__runner--vertical');
     expect(model.rightEdge).toBe(470);
     expect(model.pixelsPerValue).toBe(5.222222222222222);
     expect(model.calcValue).toBe(45);
@@ -73,7 +78,7 @@ describe('Тесты для контроллера', function() {
     model.min = 10;
     model.pixelsPerValue = 2.2;
     controller.changeValue();
-    expect(view.viewValue).toHaveBeenCalledWith(95, 10, 2.2);
+    expect(view.viewValue).toHaveBeenCalledWith(95, 10, 2.2, 'horizontal');
     expect(view.thumbElem.css('left')).toBe('187px');
     expect(view.change.val()).toBe('95');
   });

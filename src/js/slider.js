@@ -8,14 +8,16 @@ import Controller from './components/Controller';
       min: 0,
       max: 100,
       current: 0,
-      step: 1
+      step: 1,
+      position: 'horizontal'
     }, options);
 
     const sliderOptions = {
       min: options.min,
       max: options.max,
       current: options.current,
-      step: options.step
+      step: options.step,
+      position: options.position
     };
 
     const model = new Model(sliderOptions);

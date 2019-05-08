@@ -5,13 +5,24 @@ class Controller {
   }
 
   initPlugin() {
-    this.model.getCoords(this.view.elem.width(), this.view.thumbElem.width());
+    if (this.model.position !== 'vertical') {
+      this.model.getCoords(this.view.elem.width(), this.view.thumbElem.width());
+    }
+    else {
+      this.view.isVertical();
+      this.model.getCoords(this.view.elem.height(), this.view.thumbElem.height());
+    }
     this.model.setValue(this.model.current);
     this.view.initEventListeners();
   }
 
   onDocumentMouseMove(e) {
-    this.model.setValue(e.clientX, true);
+    if (this.model.position !== 'vertical') {
+      this.model.setValue(e.clientX, true);
+    }
+    else {
+      this.model.setValue(e.clientY, true);
+    }
   }
 
   onButtonClick() {
@@ -19,7 +30,7 @@ class Controller {
   }
 
   changeValue() {
-    this.view.viewValue(this.model.calcValue, this.model.min, this.model.pixelsPerValue);
+    this.view.viewValue(this.model.calcValue, this.model.min, this.model.pixelsPerValue, this.model.position);
   }
 }
 

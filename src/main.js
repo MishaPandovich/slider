@@ -12,5 +12,6 @@ $('#slider2').mySlider({
   min: 20,
   max: 100,
   current: 35,
-  step: 15
+  step: 15,
+  position: 'vertical'
 });

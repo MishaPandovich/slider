@@ -14,8 +14,13 @@ class View extends Observer {
     this.button.on('click', this.buttonClick.bind(this));
   }
 
-  viewValue(calcValue, min, pixelsPerValue) {
-    this.thumbElem.css('left', (calcValue - min) * pixelsPerValue + 'px');
+  isVertical() {
+    this.elem.addClass('slider__runner--vertical');
+  }
+
+  viewValue(calcValue, min, pixelsPerValue, position) {
+    let css = position === 'vertical' ? 'top' : 'left';
+    this.thumbElem.css(css, (calcValue - min) * pixelsPerValue + 'px');
     this.change.val(calcValue);
   }
 
