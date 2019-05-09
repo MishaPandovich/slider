@@ -1,37 +1,13 @@
-import Model from '../src/js/components/Model';
-import View from '../src/js/components/View';
-import Controller from '../src/js/components/Controller';
+import './beforeEach.js';
 
 describe('Тесты для контроллера', function() {
   beforeEach(function() {
-    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div><input class="slider__change"><button class="slider__button">Изменить</button></div>');
-
-    const sliderOptions = {
-      min: 9,
-      max: 100,
-      current: 20,
-      step: 5,
-      position: 'horizontal'
-    };
-    const model = new Model(sliderOptions);
-    const view = new View($('#slider1'));
-    const controller = new Controller(model, view);
-
-    model.subscribe('changeValue', controller.changeValue.bind(controller));
-    view.subscribe('buttonClick', controller.onButtonClick.bind(controller));
-    view.subscribe('documentMouseMove', controller.onDocumentMouseMove.bind(controller));
-
-    controller.initPlugin();
-
-    window.model = model;
-    window.view = view;
-    window.controller = controller;
-
     spyOn(model, 'getCoords').and.callThrough();
     spyOn(model, 'setValue').and.callThrough();
     spyOn(model, 'moveTo').and.callThrough();
     spyOn(view, 'initEventListeners');
-    spyOn(view, 'isVertical').and.callThrough();
+    spyOn(view, 'showVertical').and.callThrough();
+    spyOn(view, 'showPointer').and.callThrough();
     spyOn(view, 'viewValue').and.callThrough();
   });
 
@@ -45,11 +21,14 @@ describe('Тесты для контроллера', function() {
     view.thumbElem.height(30);
     model.current = 46;
     model.position = 'vertical';
+    model.hasPointer = true;
     controller.initPlugin();
-    expect(view.isVertical).toHaveBeenCalled();
-    expect(model.getCoords).toHaveBeenCalledWith(500, 30);
-    expect(model.setValue).toHaveBeenCalledWith(46);
+    expect(view.showVertical).toHaveBeenCalled();
+    expect(view.showPointer).toHaveBeenCalledWith(model.position);
+    expect(model.getCoords).toHaveBeenCalledWith(view.elem.height(), view.thumbElem.height());
+    expect(model.setValue).toHaveBeenCalledWith(model.current);
     expect(view.initEventListeners).toHaveBeenCalled();
+
     expect(view.elem).toHaveClass('slider__runner--vertical');
     expect(model.rightEdge).toBe(470);
     expect(model.pixelsPerValue).toBe(5.222222222222222);
@@ -66,9 +45,9 @@ describe('Тесты для контроллера', function() {
     expect(model.calcValue).toBe(75);
   });
 
-  it('onButtonClick', function() {
+  it('onInputChange', function() {
     view.change.val('52');
-    controller.onButtonClick();
+    controller.onInputChange();
     expect(model.setValue).toHaveBeenCalledWith(52);
     expect(model.calcValue).toBe(50);
   });
@@ -77,8 +56,9 @@ describe('Тесты для контроллера', function() {
     model.calcValue = 95;
     model.min = 10;
     model.pixelsPerValue = 2.2;
+    model.position = 'horizontal';
     controller.changeValue();
-    expect(view.viewValue).toHaveBeenCalledWith(95, 10, 2.2, 'horizontal');
+    expect(view.viewValue).toHaveBeenCalledWith(model.calcValue, model.min, model.pixelsPerValue, model.position);
     expect(view.thumbElem.css('left')).toBe('187px');
     expect(view.change.val()).toBe('95');
   });

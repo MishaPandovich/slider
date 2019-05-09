@@ -9,7 +9,8 @@ import Controller from './components/Controller';
       max: 100,
       current: 0,
       step: 1,
-      position: 'horizontal'
+      position: 'horizontal',
+      hasPointer: false
     }, options);
 
     const sliderOptions = {
@@ -17,7 +18,8 @@ import Controller from './components/Controller';
       max: options.max,
       current: options.current,
       step: options.step,
-      position: options.position
+      position: options.position,
+      hasPointer: options.hasPointer
     };
 
     const model = new Model(sliderOptions);
@@ -25,7 +27,7 @@ import Controller from './components/Controller';
     const controller = new Controller(model, view);
 
     model.subscribe('changeValue', controller.changeValue.bind(controller));
-    view.subscribe('buttonClick', controller.onButtonClick.bind(controller));
+    view.subscribe('inputChange', controller.onInputChange.bind(controller));
     view.subscribe('documentMouseMove', controller.onDocumentMouseMove.bind(controller));
 
     controller.initPlugin();

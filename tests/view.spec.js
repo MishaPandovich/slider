@@ -1,33 +1,6 @@
-import Model from '../src/js/components/Model';
-import View from '../src/js/components/View';
-import Controller from '../src/js/components/Controller';
+import './beforeEach.js';
 
 describe('Тесты для вью', function() {
-  beforeEach(function() {
-    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div><input class="slider__change"><button class="slider__button">Изменить</button></div>');
-
-    const sliderOptions = {
-      min: 9,
-      max: 100,
-      current: 20,
-      step: 5,
-      position: 'horizontal'
-    };
-    const model = new Model(sliderOptions);
-    const view = new View($('#slider1'));
-    const controller = new Controller(model, view);
-
-    model.subscribe('changeValue', controller.changeValue.bind(controller));
-    view.subscribe('buttonClick', controller.onButtonClick.bind(controller));
-    view.subscribe('documentMouseMove', controller.onDocumentMouseMove.bind(controller));
-
-    controller.initPlugin();
-
-    window.model = model;
-    window.view = view;
-    window.controller = controller;
-  });
-
   it('constructor', function() {
     expect(view.elem).toHaveClass('slider__runner');
     expect(view.thumbElem).toHaveClass('slider__thumb');
@@ -38,31 +11,43 @@ describe('Тесты для вью', function() {
 
   it('initEventListeners', function() {
     spyOn(view, 'onElemMouseDown');
-    spyOn(view, 'buttonClick');
+    spyOn(view, 'inputChange');
     view.initEventListeners();
     expect($._data(view.elem[0]).events.mousedown).toBeDefined();
-    expect($._data(view.button[0]).events.click).toBeDefined();
+    expect($._data(view.change[0]).events.focusout).toBeDefined();
 
     view.elem.mousedown();
     expect(view.onElemMouseDown).toHaveBeenCalled();
 
-    view.button.click();
-    expect(view.buttonClick).toHaveBeenCalled();
+    view.change.focusout();
+    expect(view.inputChange).toHaveBeenCalled();
   });
 
-  it('isVertical', function() {
-    view.isVertical();
+  it('showVertical', function() {
+    view.showVertical();
     expect(view.elem).toHaveClass('slider__runner--vertical');
   });
 
+  it('showPointer', function() {
+    view.showPointer('horizontal');
+    expect(view.thumbElem.children()).toHaveClass('slider__pointer');
+
+    view.showPointer('vertical');
+    expect(view.thumbElem.children()).toHaveClass('slider__pointer slider__pointer--left');
+  });
+
   it('viewValue', function() {
+    view.showPointer('horizontal');
     view.viewValue(60, 10, 3, 'horizontal');
     expect(view.thumbElem.css('left')).toBe('150px');
-    expect(view.change.val()).toBe('60');
+    expect(view.change).toHaveValue('60');
+    expect(view.thumbElem.find('.slider__pointer')).toHaveHtml('60');
 
-    view.viewValue(60, 10, 3, 'vertical');
-    expect(view.thumbElem.css('top')).toBe('150px');
-    expect(view.change.val()).toBe('60');
+    view.showPointer('vertical');
+    view.viewValue(70, 10, 3, 'vertical');
+    expect(view.thumbElem.css('top')).toBe('180px');
+    expect(view.change).toHaveValue('70');
+    expect(view.thumbElem.find('.slider__pointer--left')).toHaveHtml('70');
   });
 
   it('onElemMouseDown', function() {
@@ -81,10 +66,10 @@ describe('Тесты для вью', function() {
     expect($._data(document).events).not.toBeDefined();
   });
 
-  it('buttonClick', function() {
+  it('inputChange', function() {
     spyOn(view, 'publish');
-    view.buttonClick();
-    expect(view.publish).toHaveBeenCalledWith('buttonClick');
+    view.inputChange();
+    expect(view.publish).toHaveBeenCalledWith('inputChange');
   });
 
   it('documentMouseMove', function() {

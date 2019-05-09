@@ -9,9 +9,14 @@ class Controller {
       this.model.getCoords(this.view.elem.width(), this.view.thumbElem.width());
     }
     else {
-      this.view.isVertical();
+      this.view.showVertical();
       this.model.getCoords(this.view.elem.height(), this.view.thumbElem.height());
     }
+
+    if (this.model.hasPointer) {
+      this.view.showPointer(this.model.position);
+    }
+
     this.model.setValue(this.model.current);
     this.view.initEventListeners();
   }
@@ -25,7 +30,7 @@ class Controller {
     }
   }
 
-  onButtonClick() {
+  onInputChange() {
     this.model.setValue(+this.view.change.val());
   }
 

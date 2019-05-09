@@ -1,4 +1,6 @@
 .slider {
+  padding: 2rem;
+
   &__runner {
     width: 310px;
     height: 15px;
@@ -6,27 +8,49 @@
     border-radius: 5px;
     background: #E0E0E0;
 
-    >.slider__thumb {
-      position: relative;
-      top: -5px;
-      left: 0;
-      width: 10px;
-      height: 25px;
-      border-radius: 3px;
-      background: blue;
-      cursor: pointer;
-    }
-  }
-
-  &__runner--vertical {
+    &--vertical {
     width: 15px;
     height: 310px;
 
-    >.slider__thumb {
-      top: 0;
-      left: -5px;
-      width: 25px;
-      height: 10px;
+      >.slider__thumb {
+        top: 0;
+        left: -5px;
+        width: 25px;
+        height: 10px;
+      }
+    }
+  }
+
+  &__thumb {
+    position: relative;
+    top: -5px;
+    left: 0;
+    width: 10px;
+    height: 25px;
+    border-radius: 3px;
+    background: blue;
+    cursor: pointer;
+  }
+
+  &__pointer {
+    width: 2.25rem;
+    height: 1.5rem;
+    font-size: .8rem;
+    font-weight: 900;
+    line-height: 1.9;
+    position: absolute;
+    top: -1.5rem;
+    left: -.8rem;
+    content: "";
+    text-align: center;
+    color: #fff;
+    border-radius: .4rem;
+    background-color: blue;
+    cursor: pointer;
+
+    &--left {
+      top: -.4rem;
+      left: 1.5rem;
     }
   }
 }

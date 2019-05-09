@@ -11,17 +11,27 @@ class View extends Observer {
 
   initEventListeners() {
     this.elem.on('mousedown', this.onElemMouseDown.bind(this));
-    this.button.on('click', this.buttonClick.bind(this));
+    this.change.on('focusout', this.inputChange.bind(this));
   }
 
-  isVertical() {
+  showVertical() {
     this.elem.addClass('slider__runner--vertical');
   }
 
+  showPointer(position) {
+    let pointer = position !== 'vertical' ? $('<div class="slider__pointer">') : $('<div class="slider__pointer slider__pointer--left">');
+    this.thumbElem.append(pointer);
+  }
+
   viewValue(calcValue, min, pixelsPerValue, position) {
-    let css = position === 'vertical' ? 'top' : 'left';
+    let css = position !== 'vertical' ? 'left' : 'top';
     this.thumbElem.css(css, (calcValue - min) * pixelsPerValue + 'px');
     this.change.val(calcValue);
+
+    let pointer = this.thumbElem.find('.slider__pointer');
+    if (pointer) {
+      pointer.html(calcValue);
+    }
   }
 
   onElemMouseDown() {
@@ -30,8 +40,8 @@ class View extends Observer {
     return false;
   }
 
-  buttonClick() {
-    this.publish('buttonClick');
+  inputChange() {
+    this.publish('inputChange');
   }
 
   documentMouseMove(e) {
