@@ -25,10 +25,10 @@ describe('Тесты для модели', function() {
     spyOn(view, 'viewValue').and.callThrough();
     model.setValue(22);
     expect(model.calcValue).toBe(20);
-    expect(view.viewValue).toHaveBeenCalledWith(20, 10, 3.3333333333333335, 'horizontal');
+    expect(view.viewValue).toHaveBeenCalledWith(20, 10, 2.6666666666666665, 'horizontal');
 
     model.setValue(23, true);
     expect(model.calcValue).toBe(10);
-    expect(view.viewValue).toHaveBeenCalledWith(10, 10, 3.3333333333333335, 'horizontal');
+    expect(view.viewValue).toHaveBeenCalledWith(10, 10, 2.6666666666666665, 'horizontal');
   });
 });

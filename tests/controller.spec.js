@@ -38,18 +38,15 @@ describe('Тесты для контроллера', function() {
   it('onDocumentMouseMove', function() {
     controller.onDocumentMouseMove({ clientX: 350 });
     expect(model.setValue).toHaveBeenCalledWith(350, true);
-    expect(model.calcValue).toBe(100);
 
     controller.onDocumentMouseMove({ clientX: 252 });
     expect(model.setValue).toHaveBeenCalledWith(252, true);
-    expect(model.calcValue).toBe(75);
   });
 
   it('onInputChange', function() {
     view.change.val('52');
     controller.onInputChange();
     expect(model.setValue).toHaveBeenCalledWith(52);
-    expect(model.calcValue).toBe(50);
   });
 
   it('changeValue', function() {
