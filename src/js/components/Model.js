@@ -6,7 +6,7 @@ class Model extends Observer {
     this.min = Math.round(options.min / options.step) * options.step,
     this.max = options.max,
     this.current = options.current > options.max ? options.max : options.current,
-    this.step = options.step >= 1 ? options.step : 1,
+    this.step = options.step,
     this.position = options.position,
     this.hasPointer = options.hasPointer
   }
@@ -28,15 +28,8 @@ class Model extends Observer {
     return newLeft;
   }
 
-  setValue(value, hasRatio=false) {
-    let ratio = 1;
-
-    if (hasRatio) {
-      ratio = this.pixelsPerValue;
-    }
-
-    this.calcValue = this.moveTo(Math.round(value / this.step / ratio) * this.step);
-
+  setValue(value) {
+    this.calcValue = this.moveTo(Math.round(value / this.step) * this.step);
     this.publish('changeValue');
   }
 }
