@@ -23,10 +23,12 @@ class Controller {
 
   onDocumentMouseMove(e) {
     if (this.model.position !== 'vertical') {
-      this.model.setValue(e.clientX, true);
+      let value = (e.clientX - this.view.shiftX - this.view.sliderCoords.left) / this.model.pixelsPerValue + this.model.min;
+      this.model.setValue(value);
     }
     else {
-      this.model.setValue(e.clientY, true);
+      let value = (e.clientY - this.view.shiftY - this.view.sliderCoords.top) / this.model.pixelsPerValue + this.model.min;
+      this.model.setValue(value);
     }
   }
 
@@ -35,7 +37,7 @@ class Controller {
   }
 
   changeValue() {
-    this.view.viewValue(this.model.calcValue, this.model.min, this.model.pixelsPerValue, this.model.position);
+    this.view.showValue(this.model.calcValue, this.model.min, this.model.pixelsPerValue, this.model.position);
   }
 }
 

@@ -8,7 +8,7 @@ describe('Тесты для контроллера', function() {
     spyOn(view, 'initEventListeners');
     spyOn(view, 'showVertical').and.callThrough();
     spyOn(view, 'showPointer').and.callThrough();
-    spyOn(view, 'viewValue').and.callThrough();
+    spyOn(view, 'showValue').and.callThrough();
   });
 
   it('constructor', function() {
@@ -36,11 +36,26 @@ describe('Тесты для контроллера', function() {
   });
 
   it('onDocumentMouseMove', function() {
-    controller.onDocumentMouseMove({ clientX: 350 });
-    expect(model.setValue).toHaveBeenCalledWith(350, true);
+    let setValue = (client) => {
+      if (model.position !== 'vertical') {
+        return (client - view.shiftX - view.sliderCoords.left) / model.pixelsPerValue + model.min;
+      }
+      else {
+        return (client - view.shiftY - view.sliderCoords.top) / model.pixelsPerValue + model.min;
+      }
+    }
 
-    controller.onDocumentMouseMove({ clientX: 252 });
-    expect(model.setValue).toHaveBeenCalledWith(252, true);
+    let e = { clientX: 350, clientY: 50, target: view.thumbElem[0] };
+    view.onElemMouseDown(e);
+
+    let value = setValue(e.clientX);
+    controller.onDocumentMouseMove(e);
+    expect(model.setValue).toHaveBeenCalledWith(value);
+
+    model.position = 'vertical';
+    value = setValue(e.clientY);
+    controller.onDocumentMouseMove(e);
+    expect(model.setValue).toHaveBeenCalledWith(value);
   });
 
   it('onInputChange', function() {
@@ -55,7 +70,7 @@ describe('Тесты для контроллера', function() {
     model.pixelsPerValue = 2.2;
     model.position = 'horizontal';
     controller.changeValue();
-    expect(view.viewValue).toHaveBeenCalledWith(model.calcValue, model.min, model.pixelsPerValue, model.position);
+    expect(view.showValue).toHaveBeenCalledWith(model.calcValue, model.min, model.pixelsPerValue, model.position);
     expect(view.thumbElem.css('left')).toBe('187px');
     expect(view.change.val()).toBe('95');
   });

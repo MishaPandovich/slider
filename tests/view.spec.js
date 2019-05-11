@@ -5,7 +5,6 @@ describe('Тесты для вью', function() {
     expect(view.elem).toHaveClass('slider__runner');
     expect(view.thumbElem).toHaveClass('slider__thumb');
     expect(view.change).toHaveClass('slider__change');
-    expect(view.button).toHaveClass('slider__button');
     expect(view.subscribers.any).toBeDefined();
   });
 
@@ -13,10 +12,10 @@ describe('Тесты для вью', function() {
     spyOn(view, 'onElemMouseDown');
     spyOn(view, 'inputChange');
     view.initEventListeners();
-    expect($._data(view.elem[0]).events.mousedown).toBeDefined();
+    expect($._data(view.thumbElem[0]).events.mousedown).toBeDefined();
     expect($._data(view.change[0]).events.focusout).toBeDefined();
 
-    view.elem.mousedown();
+    view.thumbElem.mousedown();
     expect(view.onElemMouseDown).toHaveBeenCalled();
 
     view.change.focusout();
@@ -36,15 +35,15 @@ describe('Тесты для вью', function() {
     expect(view.thumbElem.children()).toHaveClass('slider__pointer slider__pointer--left');
   });
 
-  it('viewValue', function() {
+  it('showValue', function() {
     view.showPointer('horizontal');
-    view.viewValue(60, 10, 3, 'horizontal');
+    view.showValue(60, 10, 3, 'horizontal');
     expect(view.thumbElem.css('left')).toBe('150px');
     expect(view.change).toHaveValue('60');
     expect(view.thumbElem.find('.slider__pointer')).toHaveHtml('60');
 
     view.showPointer('vertical');
-    view.viewValue(70, 10, 3, 'vertical');
+    view.showValue(70, 10, 3, 'vertical');
     expect(view.thumbElem.css('top')).toBe('180px');
     expect(view.change).toHaveValue('70');
     expect(view.thumbElem.find('.slider__pointer--left')).toHaveHtml('70');
@@ -53,8 +52,12 @@ describe('Тесты для вью', function() {
   it('onElemMouseDown', function() {
     spyOn(view, 'documentMouseMove').and.callThrough();
     spyOn(view, 'onDocumentMouseUp').and.callThrough();
-    let fn = view.onElemMouseDown();
+    let e = { clientX: 350, clientY: 50, target: view.thumbElem[0] };
+    let fn = view.onElemMouseDown(e);
     expect(fn).toBeFalsy();
+    expect(view.shiftX).toBe(e.clientX - e.target.getBoundingClientRect().left);
+    expect(view.shiftY).toBe(e.clientY - e.target.getBoundingClientRect().top);
+    expect(view.sliderCoords).toEqual(e.target.parentElement.getBoundingClientRect());
 
     $(document).mousemove();
     expect(view.documentMouseMove).toHaveBeenCalled();

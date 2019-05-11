@@ -4,13 +4,12 @@ class View extends Observer {
   constructor(slider) {
     super();
     this.elem = $(slider).find('.slider__runner'),
-    this.thumbElem = $(slider).find('.slider__thumb'),
-    this.change = $(slider).find('.slider__change'),
-    this.button = $(slider).find('.slider__button')
+    this.thumbElem = this.elem.find('.slider__thumb'),
+    this.change = $(slider).find('.slider__change')
   }
 
   initEventListeners() {
-    this.elem.on('mousedown', this.onElemMouseDown.bind(this));
+    this.thumbElem.on('mousedown', this.onElemMouseDown.bind(this));
     this.change.on('focusout', this.inputChange.bind(this));
   }
 
@@ -23,7 +22,7 @@ class View extends Observer {
     this.thumbElem.append(pointer);
   }
 
-  viewValue(calcValue, min, pixelsPerValue, position) {
+  showValue(calcValue, min, pixelsPerValue, position) {
     let css = position !== 'vertical' ? 'left' : 'top';
     this.thumbElem.css(css, (calcValue - min) * pixelsPerValue + 'px');
     this.change.val(calcValue);
@@ -34,7 +33,12 @@ class View extends Observer {
     }
   }
 
-  onElemMouseDown() {
+  onElemMouseDown(e) {
+    let thumbCoords = e.target.getBoundingClientRect();
+    this.shiftX = e.clientX - thumbCoords.left;
+    this.shiftY = e.clientY - thumbCoords.top;
+    this.sliderCoords = e.target.parentElement.getBoundingClientRect();
+
     $(document).on('mousemove', this.documentMouseMove.bind(this));
     $(document).on('mouseup', this.onDocumentMouseUp.bind(this));
     return false;
