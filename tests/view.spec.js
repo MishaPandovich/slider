@@ -5,6 +5,7 @@ describe('Тесты для вью', function() {
     expect(view.elem).toHaveClass('slider__runner');
     expect(view.thumbElem).toHaveClass('slider__thumb');
     expect(view.change).toHaveClass('slider__change');
+    expect(view.change).toHaveAttr('type', 'button');
     expect(view.subscribers.any).toBeDefined();
   });
 
@@ -19,7 +20,22 @@ describe('Тесты для вью', function() {
     expect(view.onElemMouseDown).toHaveBeenCalled();
 
     view.change.focusout();
-    expect(view.inputChange).toHaveBeenCalled();
+    expect(view.inputChange).toHaveBeenCalledWith(view.change);
+  });
+
+  it('addSecondThumb', function() {
+    view.addSecondThumb();
+    expect(view.elem.children()).toHaveClass('slider__thumb--second');
+    expect(view.elem.parent('.slider').children()).toHaveClass('slider__change--second');
+    expect(view.thumbElem.length).toBe(2);
+    expect(view.change.length).toBe(2);
+  });
+
+  it('setInputsAttr', function() {
+    view.setInputsAttr(10, 30, 3);
+    expect(view.change.attr('min')).toBe('10');
+    expect(view.change.attr('max')).toBe('30');
+    expect(view.change.attr('step')).toBe('3');
   });
 
   it('showVertical', function() {
@@ -27,26 +43,29 @@ describe('Тесты для вью', function() {
     expect(view.elem).toHaveClass('slider__runner--vertical');
   });
 
-  it('showPointer', function() {
-    view.showPointer('horizontal');
+  it('addPointer', function() {
+    view.addPointer('horizontal');
     expect(view.thumbElem.children()).toHaveClass('slider__pointer');
 
-    view.showPointer('vertical');
+    view.addPointer('vertical');
     expect(view.thumbElem.children()).toHaveClass('slider__pointer slider__pointer--left');
   });
 
   it('showValue', function() {
-    view.showPointer('horizontal');
-    view.showValue(60, 10, 3, 'horizontal');
-    expect(view.thumbElem.css('left')).toBe('150px');
-    expect(view.change).toHaveValue('60');
-    expect(view.thumbElem.find('.slider__pointer')).toHaveHtml('60');
+    view.addSecondThumb();
+    view.addPointer('horizontal');
+    let elem = view.thumbElem.eq(0);
+    view.showValue(elem, 60, 10, 3, 'horizontal');
+    expect(elem.css('left')).toBe('150px');
+    expect(view.change.eq(0)).toHaveValue('60');
+    expect(elem.find('.slider__pointer')).toHaveHtml('60');
 
-    view.showPointer('vertical');
-    view.showValue(70, 10, 3, 'vertical');
-    expect(view.thumbElem.css('top')).toBe('180px');
-    expect(view.change).toHaveValue('70');
-    expect(view.thumbElem.find('.slider__pointer--left')).toHaveHtml('70');
+    view.addPointer('vertical');
+    elem = view.thumbElem.eq(1);
+    view.showValue(elem, 70, 10, 3, 'vertical');
+    expect(elem.css('top')).toBe('180px');
+    expect(view.change.eq(1)).toHaveValue('70');
+    expect(elem.find('.slider__pointer--left')).toHaveHtml('70');
   });
 
   it('onElemMouseDown', function() {
@@ -71,14 +90,16 @@ describe('Тесты для вью', function() {
 
   it('inputChange', function() {
     spyOn(view, 'publish');
-    view.inputChange();
-    expect(view.publish).toHaveBeenCalledWith('inputChange');
+    let elem = view.change.eq(0);
+    view.inputChange(elem, {});
+    expect(view.publish).toHaveBeenCalledWith('inputChange', elem);
   });
 
   it('documentMouseMove', function() {
     spyOn(view, 'publish');
-    view.documentMouseMove({});
-    expect(view.publish).toHaveBeenCalledWith('documentMouseMove', {});
+    let elem = view.change.eq(0);
+    view.documentMouseMove(elem, {});
+    expect(view.publish).toHaveBeenCalledWith('documentMouseMove', elem, {});
   });
 
   it('onDocumentMouseUp', function() {

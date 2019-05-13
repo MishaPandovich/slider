@@ -3,15 +3,16 @@ import View from '../src/js/components/View';
 import Controller from '../src/js/components/Controller';
 
 beforeEach(function() {
-  setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div><input class="slider__change"><button class="slider__button">Изменить</button></div>');
+  setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb slider__thumb--first"></div></div><input class="slider__change slider__change--first" type="button"><button class="slider__button">Изменить</button></div>');
 
   const sliderOptions = {
     min: 9,
     max: 100,
-    current: 20,
+    current: 19,
     step: 5,
     position: 'horizontal',
-    hasPointer: false
+    hasPointer: false,
+    hasInterval: false
   };
   const model = new Model(sliderOptions);
   const view = new View($('#slider1'));

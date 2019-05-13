@@ -10,7 +10,8 @@ import Controller from './components/Controller';
       current: 0,
       step: 1,
       position: 'horizontal',
-      hasPointer: false
+      hasPointer: false,
+      hasInterval: false
     }, options);
 
     const sliderOptions = {
@@ -19,16 +20,17 @@ import Controller from './components/Controller';
       current: options.current,
       step: options.step,
       position: options.position,
-      hasPointer: options.hasPointer
+      hasPointer: options.hasPointer,
+      hasInterval: options.hasInterval
     };
 
     const model = new Model(sliderOptions);
     const view = new View(this);
     const controller = new Controller(model, view);
 
-    model.subscribe('changeValue', controller.changeValue.bind(controller));
-    view.subscribe('inputChange', controller.onInputChange.bind(controller));
-    view.subscribe('documentMouseMove', controller.onDocumentMouseMove.bind(controller));
+    model.subscribe('changeValue', $.proxy(controller.changeValue, controller));
+    view.subscribe('inputChange', $.proxy(controller.onInputChange, controller));
+    view.subscribe('documentMouseMove', $.proxy(controller.onDocumentMouseMove, controller));
 
     controller.initPlugin();
   }

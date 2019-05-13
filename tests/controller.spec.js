@@ -6,8 +6,10 @@ describe('Тесты для контроллера', function() {
     spyOn(model, 'setValue').and.callThrough();
     spyOn(model, 'moveTo').and.callThrough();
     spyOn(view, 'initEventListeners');
+    spyOn(view, 'addSecondThumb').and.callThrough();
+    spyOn(view, 'setInputsAttr').and.callThrough();
     spyOn(view, 'showVertical').and.callThrough();
-    spyOn(view, 'showPointer').and.callThrough();
+    spyOn(view, 'addPointer').and.callThrough();
     spyOn(view, 'showValue').and.callThrough();
   });
 
@@ -17,22 +19,27 @@ describe('Тесты для контроллера', function() {
   });
 
   it('initPlugin', function() {
-    view.elem.height(500);
-    view.thumbElem.height(30);
-    model.current = 46;
-    model.position = 'vertical';
+    view.elem.width(500);
+    view.thumbElem.width(30);
+    model.position = 'gorizontal';
     model.hasPointer = true;
+    model.hasInterval = true;
     controller.initPlugin();
-    expect(view.showVertical).toHaveBeenCalled();
-    expect(view.showPointer).toHaveBeenCalledWith(model.position);
-    expect(model.getCoords).toHaveBeenCalledWith(view.elem.height(), view.thumbElem.height());
-    expect(model.setValue).toHaveBeenCalledWith(model.current);
-    expect(view.initEventListeners).toHaveBeenCalled();
+    expect(model.getCoords).toHaveBeenCalledWith(view.elem.width(), view.thumbElem.width());
 
-    expect(view.elem).toHaveClass('slider__runner--vertical');
-    expect(model.rightEdge).toBe(470);
-    expect(model.pixelsPerValue).toBe(5.222222222222222);
-    expect(model.calcValue).toBe(45);
+    view.elem.height(600);
+    view.thumbElem.height(40);
+    model.position = 'vertical';
+    controller.initPlugin();
+    expect(model.getCoords).toHaveBeenCalledWith(view.elem.height(), view.thumbElem.height());
+
+    expect(view.showVertical).toHaveBeenCalled();
+    expect(view.addSecondThumb).toHaveBeenCalled();
+    expect(view.addPointer).toHaveBeenCalledWith(model.position);
+    expect(view.setInputsAttr).toHaveBeenCalledWith(model.min, model.max, model.step);
+    expect(model.setValue).toHaveBeenCalledWith(model.current, view.thumbElem.eq(0));
+    expect(model.setValue).toHaveBeenCalledWith(model.current, view.thumbElem.eq(1));
+    expect(view.initEventListeners).toHaveBeenCalled();
   });
 
   it('onDocumentMouseMove', function() {
@@ -46,32 +53,42 @@ describe('Тесты для контроллера', function() {
     }
 
     let e = { clientX: 350, clientY: 50, target: view.thumbElem[0] };
+    let elem = view.thumbElem.eq(0);
     view.onElemMouseDown(e);
 
     let value = setValue(e.clientX);
-    controller.onDocumentMouseMove(e);
-    expect(model.setValue).toHaveBeenCalledWith(value);
+    controller.onDocumentMouseMove(elem, e);
+    expect(model.setValue).toHaveBeenCalledWith(value, elem);
 
     model.position = 'vertical';
     value = setValue(e.clientY);
-    controller.onDocumentMouseMove(e);
-    expect(model.setValue).toHaveBeenCalledWith(value);
+    controller.onDocumentMouseMove(elem, e);
+    expect(model.setValue).toHaveBeenCalledWith(value, elem);
   });
 
   it('onInputChange', function() {
-    view.change.val('52');
-    controller.onInputChange();
-    expect(model.setValue).toHaveBeenCalledWith(52);
+    let elem = view.change.eq(0);
+    elem.val('40');
+    controller.onInputChange(elem);
+    expect(model.setValue).toHaveBeenCalledWith(40, view.thumbElem.eq(0));
+
+    view.addSecondThumb();
+    elem = view.change.eq(1);
+    elem.val('50');
+    controller.onInputChange(elem);
+    expect(model.setValue).toHaveBeenCalledWith(50, view.thumbElem.eq(1));
   });
 
   it('changeValue', function() {
-    model.calcValue = 95;
+    let elem = view.thumbElem.eq(0);
+    let change = view.change.eq(0);
+    let res = 95;
     model.min = 10;
     model.pixelsPerValue = 2.2;
     model.position = 'horizontal';
-    controller.changeValue();
-    expect(view.showValue).toHaveBeenCalledWith(model.calcValue, model.min, model.pixelsPerValue, model.position);
-    expect(view.thumbElem.css('left')).toBe('187px');
-    expect(view.change.val()).toBe('95');
+    controller.changeValue(elem, res);
+    expect(view.showValue).toHaveBeenCalledWith(elem, res, model.min, model.pixelsPerValue, model.position);
+    expect(elem.css('left')).toBe('187px');
+    expect(change.val()).toBe('95');
   });
 });

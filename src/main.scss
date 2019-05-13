@@ -28,6 +28,10 @@
     background-color: #e75735;
     cursor: pointer;
     outline: none;
+
+    &--second {
+      top: -1.6rem;
+    }
   }
 
   &__pointer {
