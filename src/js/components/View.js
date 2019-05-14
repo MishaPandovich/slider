@@ -62,12 +62,13 @@ class View extends Observer {
   }
 
   onElemMouseDown(e) {
-    let thumbCoords = e.target.getBoundingClientRect();
+    let elem = $(e.target).closest('.slider__thumb');
+    let thumbCoords = elem[0].getBoundingClientRect();
     this.shiftX = e.clientX - thumbCoords.left;
     this.shiftY = e.clientY - thumbCoords.top;
-    this.sliderCoords = e.target.parentElement.getBoundingClientRect();
+    this.sliderCoords = elem[0].parentElement.getBoundingClientRect();
 
-    $(document).on('mousemove', this.documentMouseMove.bind(this, e.target));
+    $(document).on('mousemove', this.documentMouseMove.bind(this, elem[0]));
     $(document).on('mouseup', this.onDocumentMouseUp.bind(this));
     return false;
   }
