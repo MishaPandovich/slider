@@ -3,24 +3,16 @@ import Observer from './Observer';
 class Model extends Observer {
   constructor(options) {
     super();
-    this.min = Math.round(options.min / options.step) * options.step,
-    this.max = options.max,
-    this.current = options.current > options.max ? options.max : options.current,
     this.step = Math.round(options.step) || 1,
-    this.position = options.position,
-    this.hasPointer = options.hasPointer,
-    this.hasInterval = options.hasInterval,
+    this.min = Math.round(options.min / options.step) * options.step,
+    this.max = Math.trunc(options.max / options.step) * options.step,
+    this.current = options.current > options.max ? options.max : options.current,
     this.calcValue = []
   }
 
-  getCoords(elemWidth, thumbElemWidth) {
-    this.rightEdge = elemWidth - thumbElemWidth;
-    this.pixelsPerValue = this.rightEdge / (this.max - this.min);
-  }
-
-  setValue(value, elem) {
-    elem = $(elem);
-    let res = this.moveTo(Math.round(value / this.step) * this.step, elem);
+  setValue(options) {
+    let elem = $(options.elem),
+        res = this.moveTo(Math.round(options.value / this.step) * this.step, elem);
 
     if (elem.hasClass('slider__thumb--first')) {
       this.calcValue[0] = res;
@@ -28,8 +20,11 @@ class Model extends Observer {
     else {
       this.calcValue[1] = res;
     }
-    
-    this.publish('changeValue', elem, res);
+
+    this.publish('changeValue', {
+      elem: elem,
+      value: res
+    });
   }
 
   moveTo(checkValue, elem) {

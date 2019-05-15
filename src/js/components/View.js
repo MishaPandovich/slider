@@ -1,63 +1,103 @@
+import ViewThumb from './ViewThumb.js';
+import ViewPointer from './ViewPointer.js';
 import Observer from './Observer';
 
 class View extends Observer {
-  constructor(slider) {
+  constructor(options) {
     super();
-    this.slider = $(slider);
-    this.elem = this.slider.find('.slider__runner'),
-    this.thumbElem = this.elem.find('.slider__thumb'),
-    this.change = this.slider.find('.slider__change')
+    this.slider = $(options.slider);
+    this.elem = this.slider.find('.slider__runner');
+    this.position = options.position;
+    this.hasInterval = options.hasInterval;
+    this.hasPointer = options.hasPointer;
+  }
+
+  init(options) {
+    let passedOptions = {
+      min: options.min,
+      max: options.max,
+      step: options.step
+    }
+
+    this.showPosition();
+    this.addThumbs();
+    this.addPointer();
+    this.initEventListeners();
+    this.setInputsAttr(passedOptions);
+    this.getCoords(passedOptions);
+  }
+
+  addThumbs() {
+    let viewThumb = new ViewThumb();
+    viewThumb.createThumb({
+      elem: this.elem
+    });
+
+    if (this.hasInterval) {
+      viewThumb.createThumb({
+        elem: this.elem,
+        modifier: 'second'
+      });
+    }
+
+    this.thumbElem = this.slider.find('.slider__thumb');
+    this.input = this.slider.find('.slider__input');
   }
 
   initEventListeners() {
     this.thumbElem.on('mousedown', this.onElemMouseDown.bind(this));
-    this.change.on('focusout', (e) => { this.inputChange(e.target) });
+    this.input.on('focusout', (e) => { this.inputChange(e.target) });
   }
 
-  addSecondThumb() {
-    let secondThumbElem = $('<div class="slider__thumb slider__thumb--second">');
-    this.elem.append(secondThumbElem);
-
-    let secondChange = $('<input type="number" class="slider__change slider__change--second">');
-    this.elem.parent('.slider').append(secondChange);
-
-    this.thumbElem = this.elem.find('.slider__thumb');
-    this.change = this.slider.find('.slider__change');
-  }
-
-  setInputsAttr(min, max, step) {
-    this.change.attr({
-      min: min,
-      max: max,
-      step: step
+  setInputsAttr(options) {
+    this.input.attr({
+      min: options.min,
+      max: options.max,
+      step: options.step
     });
   }
 
-  showVertical() {
-    this.elem.addClass('slider__runner--vertical');
+  addPointer() {
+    if (this.hasPointer) {
+      let viewPointer = new ViewPointer();
+      viewPointer.createPointer({
+        position: this.position,
+        thumbElem: this.thumbElem
+      });
+    }
   }
 
-  addPointer(position) {
-    let pointer = position !== 'vertical' ? '<div class="slider__pointer">' : '<div class="slider__pointer slider__pointer--left">';
-    this.thumbElem.append($(pointer));
+  showPosition() {
+    if (this.position === 'vertical') {
+      this.elem.addClass('slider__runner--vertical');
+    }
   }
 
-  showValue(elem, calcValue, min, pixelsPerValue, position) {
-    let css = position !== 'vertical' ? 'left' : 'top';
-    let cssValue = (calcValue - min) * pixelsPerValue;
+  getCoords(options) {
+    let rightEdge = (this.position !== 'vertical')
+                    ? this.elem.width() - this.thumbElem.width()
+                    : this.elem.height() - this.thumbElem.height();
+    this.pixelsPerValue = rightEdge / (options.max - options.min);
+  }
+
+  showValue(options) {
+    let elem = options.elem,
+        value = options.value,
+        css = this.position !== 'vertical' ? 'left' : 'top',
+        cssValue = (value - options.min) * this.pixelsPerValue;
 
     elem.css(css, cssValue + 'px');
 
     if (elem.hasClass('slider__thumb--first')) {
-      this.change.eq(0).val(calcValue);
+      this.input.eq(0).val(value);
     }
     else {
-      this.change.eq(1).val(calcValue);
+      this.input.eq(1).val(value);
     }
 
     let pointer = elem.find('.slider__pointer');
     if (pointer) {
-      pointer.html(calcValue);
+      pointer.html(value);
     }
   }
 

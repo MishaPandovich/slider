@@ -3,10 +3,9 @@ import './js/slider.js';
 
 $('#slider1').mySlider({
   min: 9,
-  max: 100,
+  max: 200,
   current: 19,
-  step: 5,
-  hasPointer: true,
+  step: 20,
   hasInterval: true
 });
 
@@ -16,5 +15,5 @@ $('#slider2').mySlider({
   current: 35,
   step: 10,
   position: 'vertical',
-  hasPointer: true
+  hasInterval: true
 });

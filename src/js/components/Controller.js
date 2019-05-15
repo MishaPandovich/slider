@@ -5,51 +5,53 @@ class Controller {
   }
 
   initPlugin() {
-    if (this.model.position !== 'vertical') {
-      this.model.getCoords(this.view.elem.width(), this.view.thumbElem.width());
-    }
-    else {
-      this.view.showVertical();
-      this.model.getCoords(this.view.elem.height(), this.view.thumbElem.height());
-    }
-
-    if (this.model.hasInterval) {
-      this.view.addSecondThumb();
-    }
-
-    if (this.model.hasPointer) {
-      this.view.addPointer(this.model.position);
-    }
-
-    this.view.setInputsAttr(this.model.min, this.model.max, this.model.step);
+    this.view.init({
+      min: this.model.min,
+      max: this.model.max,
+      step: this.model.step
+    });
 
     for (let i = 0; i < this.view.thumbElem.length; i++) {
-      this.model.setValue(this.model.current, this.view.thumbElem.eq(i));
+      this.model.setValue({
+        value: this.model.current,
+        elem: this.view.thumbElem.eq(i)
+      });
     }
-
-    this.view.initEventListeners();
   }
 
   onDocumentMouseMove(elem, e) {
-    if (this.model.position !== 'vertical') {
-      let value = (e.clientX - this.view.shiftX - this.view.sliderCoords.left) / this.model.pixelsPerValue + this.model.min;
-      this.model.setValue(value, elem);
+    if (this.view.position !== 'vertical') {
+      let value = (e.clientX - this.view.shiftX - this.view.sliderCoords.left) / this.view.pixelsPerValue + this.model.min;
+      this.model.setValue({
+        value: value,
+        elem: elem
+      });
     }
     else {
-      let value = (e.clientY - this.view.shiftY - this.view.sliderCoords.top) / this.model.pixelsPerValue + this.model.min;
-      this.model.setValue(value, elem);
+      let value = (e.clientY - this.view.shiftY - this.view.sliderCoords.top) / this.view.pixelsPerValue + this.model.min;
+      this.model.setValue({
+        value: value,
+        elem: elem
+      });
     }
   }
 
   onInputChange(elem) {
     elem = $(elem);
-    let thumbElem = (elem.hasClass('slider__change--first')) ? this.view.thumbElem.eq(0) : this.view.thumbElem.eq(1);
+    let thumbElem = (elem.hasClass('slider__input--first')) ? this.view.thumbElem.eq(0) : this.view.thumbElem.eq(1);
 
-    this.model.setValue(+elem.val(), thumbElem);
+    this.model.setValue({
+      value: +elem.val(),
+      elem: thumbElem
+    });
   }
 
-  changeValue(elem, res) {
-    this.view.showValue(elem, res, this.model.min, this.model.pixelsPerValue, this.model.position);
+  changeValue(options) {
+    this.view.showValue({
+      elem: options.elem,
+      value: options.value,
+      min: this.model.min
+    });
   }
 }
 

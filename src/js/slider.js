@@ -10,22 +10,25 @@ import Controller from './components/Controller';
       current: 0,
       step: 1,
       position: 'horizontal',
-      hasPointer: false,
-      hasInterval: false
+      hasInterval: false,
+      hasPointer: true
     }, options);
 
-    const sliderOptions = {
+    const modelOptions = {
       min: options.min,
       max: options.max,
       current: options.current,
-      step: options.step,
+      step: options.step
+    };
+    const viewOptions = {
+      slider: this,
       position: options.position,
-      hasPointer: options.hasPointer,
-      hasInterval: options.hasInterval
+      hasInterval: options.hasInterval,
+      hasPointer: options.hasPointer
     };
 
-    const model = new Model(sliderOptions);
-    const view = new View(this);
+    const model = new Model(modelOptions);
+    const view = new View(viewOptions);
     const controller = new Controller(model, view);
 
     model.subscribe('changeValue', $.proxy(controller.changeValue, controller));

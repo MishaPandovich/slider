@@ -1,15 +1,17 @@
 .slider {
+  padding: 2rem;
+
   &__runner {
-    width: 16.2rem;
+    position: relative;
+    width: 25rem;
     height: .5rem;
-    margin: 2rem;
     border-radius: 5rem;
     background-color: #e5e5e5;
     cursor: pointer;
 
     &--vertical {
       width: .5rem;
-      height: 16.2rem;
+      height: 17rem;
 
       >.slider__thumb {
         top: 0;
@@ -19,7 +21,7 @@
   }
 
   &__thumb {
-    position: relative;
+    position: absolute;
     top: -.4rem;
     left: 0;
     width: 1.2rem;
@@ -28,22 +30,17 @@
     background-color: #e75735;
     cursor: pointer;
     outline: none;
-
-    &--second {
-      top: -1.6rem;
-    }
   }
 
   &__pointer {
+    position: absolute;
+    top: -1.7rem;
+    left: -.5rem;
     width: 2.25rem;
     height: 1.5rem;
     font-size: .8rem;
     font-weight: 900;
     line-height: 1.9;
-    position: absolute;
-    top: -1.7rem;
-    left: -.5rem;
-    content: "";
     text-align: center;
     color: #fff;
     border-radius: .4rem;
@@ -51,10 +48,10 @@
     cursor: pointer;
 
     &:after {
-      bottom: -.17rem;
-      left: .9rem;
       content: "";
       position: absolute;
+      bottom: -.17rem;
+      left: .9rem;
       width: .3rem;
       height: .3rem;
       background-color: #e75735;
@@ -70,5 +67,9 @@
         left: -.15rem;
       }
     }
+  }
+
+  &__input {
+    margin: 2rem 1rem 2rem 0;
   }
 }
