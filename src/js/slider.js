@@ -11,7 +11,8 @@ import Controller from './components/Controller';
       step: 1,
       position: 'horizontal',
       hasInterval: false,
-      hasPointer: true
+      hasPointer: true,
+      hasScale: true
     }, options);
 
     const modelOptions = {
@@ -24,7 +25,8 @@ import Controller from './components/Controller';
       slider: this,
       position: options.position,
       hasInterval: options.hasInterval,
-      hasPointer: options.hasPointer
+      hasPointer: options.hasPointer,
+      hasScale: options.hasScale
     };
 
     const model = new Model(modelOptions);

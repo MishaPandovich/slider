@@ -1,5 +1,6 @@
 import ViewThumb from './ViewThumb.js';
 import ViewPointer from './ViewPointer.js';
+import ViewScale from './ViewScale.js';
 import Observer from './Observer';
 
 class View extends Observer {
@@ -10,6 +11,7 @@ class View extends Observer {
     this.position = options.position;
     this.hasInterval = options.hasInterval;
     this.hasPointer = options.hasPointer;
+    this.hasScale = options.hasScale;
   }
 
   init(options) {
@@ -25,6 +27,7 @@ class View extends Observer {
     this.initEventListeners();
     this.setInputsAttr(passedOptions);
     this.getCoords(passedOptions);
+    this.addScale(passedOptions);
   }
 
   addThumbs() {
@@ -63,6 +66,20 @@ class View extends Observer {
       viewPointer.createPointer({
         position: this.position,
         thumbElem: this.thumbElem
+      });
+    }
+  }
+
+  addScale(options) {
+    if (this.hasScale) {
+      let viewScale = new ViewScale();
+      viewScale.createScale({
+        position: this.position,
+        elem: this.elem,
+        pixelsPerValue: this.pixelsPerValue,
+        min: options.min,
+        max: options.max,
+        step: options.step
       });
     }
   }
