@@ -5,7 +5,7 @@ $('#slider1').mySlider({
   min: 9,
   max: 200,
   current: 19,
-  step: 20,
+  step: 10,
   hasInterval: true
 });
 

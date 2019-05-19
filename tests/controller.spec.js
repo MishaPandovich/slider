@@ -1,94 +1,87 @@
-import './beforeEach.js';
+import Model from '../src/js/components/Model';
+import View from '../src/js/components/View';
+import Controller from '../src/js/components/Controller';
 
 describe('Тесты для контроллера', function() {
+  let model = new Model({
+    min: 9,
+    max: 200,
+    current: 19,
+    step: 10
+  });
+
+  let view = new View({
+    slider: $('#slider1'),
+    position: 'horizontal',
+    hasScale: false
+  });
+
+  let controller, thumbElem;
+
   beforeEach(function() {
-    spyOn(model, 'getCoords').and.callThrough();
-    spyOn(model, 'setValue').and.callThrough();
-    spyOn(model, 'moveTo').and.callThrough();
-    spyOn(view, 'initEventListeners');
-    spyOn(view, 'addSecondThumb').and.callThrough();
-    spyOn(view, 'setInputsAttr').and.callThrough();
-    spyOn(view, 'showVertical').and.callThrough();
-    spyOn(view, 'addPointer').and.callThrough();
-    spyOn(view, 'showValue').and.callThrough();
+    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div><input type="number" class="slider__input"></div>');
+
+    thumbElem = $('.slider__thumb');
+
+    controller = new Controller({ model, view });
   });
 
   it('constructor', function() {
-    expect(typeof controller.model).toBe('object');
-    expect(typeof controller.view).toBe('object');
+    expect(controller.model).toBe(model);
+    expect(controller.view).toBe(view);
   });
 
   it('initPlugin', function() {
-    view.elem.width(500);
-    view.thumbElem.width(30);
-    model.position = 'gorizontal';
-    model.hasPointer = true;
-    model.hasInterval = true;
+    spyOn(controller.view, 'init');
     controller.initPlugin();
-    expect(model.getCoords).toHaveBeenCalledWith(view.elem.width(), view.thumbElem.width());
+    expect(controller.view.init).toHaveBeenCalledWith({
+      min: controller.model.min,
+      max: controller.model.max,
+      step: controller.model.step
+    });
+  });
 
-    view.elem.height(600);
-    view.thumbElem.height(40);
-    model.position = 'vertical';
-    controller.initPlugin();
-    expect(model.getCoords).toHaveBeenCalledWith(view.elem.height(), view.thumbElem.height());
-
-    expect(view.showVertical).toHaveBeenCalled();
-    expect(view.addSecondThumb).toHaveBeenCalled();
-    expect(view.addPointer).toHaveBeenCalledWith(model.position);
-    expect(view.setInputsAttr).toHaveBeenCalledWith(model.min, model.max, model.step);
-    expect(model.setValue).toHaveBeenCalledWith(model.current, view.thumbElem.eq(0));
-    expect(model.setValue).toHaveBeenCalledWith(model.current, view.thumbElem.eq(1));
-    expect(view.initEventListeners).toHaveBeenCalled();
+  it('setInitialValue', function() {
+    spyOn(controller.model, 'setValue');
+    controller.setInitialValue(thumbElem);
+    expect(controller.model.setValue).toHaveBeenCalledWith({
+      index: 0,
+      value: controller.model.current,
+      elem: thumbElem.eq(0)
+    });
   });
 
   it('onDocumentMouseMove', function() {
-    let setValue = (client) => {
-      if (model.position !== 'vertical') {
-        return (client - view.shiftX - view.sliderCoords.left) / model.pixelsPerValue + model.min;
-      }
-      else {
-        return (client - view.shiftY - view.sliderCoords.top) / model.pixelsPerValue + model.min;
-      }
-    }
-
-    let e = { clientX: 350, clientY: 50, target: view.thumbElem[0] };
-    let elem = view.thumbElem.eq(0);
-    view.onElemMouseDown(e);
-
-    let value = setValue(e.clientX);
-    controller.onDocumentMouseMove(elem, e);
-    expect(model.setValue).toHaveBeenCalledWith(value, elem);
-
-    model.position = 'vertical';
-    value = setValue(e.clientY);
-    controller.onDocumentMouseMove(elem, e);
-    expect(model.setValue).toHaveBeenCalledWith(value, elem);
+    spyOn(controller.model, 'setValue');
+    controller.onDocumentMouseMove({ elem: thumbElem, value: 30 });
+    expect(controller.model.setValue).toHaveBeenCalledWith({
+      index: 0,
+      value: 40,
+      elem: thumbElem
+    });
   });
 
   it('onInputChange', function() {
-    let elem = view.change.eq(0);
-    elem.val('40');
-    controller.onInputChange(elem);
-    expect(model.setValue).toHaveBeenCalledWith(40, view.thumbElem.eq(0));
-
-    view.addSecondThumb();
-    elem = view.change.eq(1);
-    elem.val('50');
-    controller.onInputChange(elem);
-    expect(model.setValue).toHaveBeenCalledWith(50, view.thumbElem.eq(1));
+    spyOn(controller.model, 'setValue');
+    let options = {
+      index: 'index',
+      value: 'value',
+      elem: 'elem'
+    };
+    let { index, value, elem } = options;
+    controller.onInputChange({ index, value, elem });
+    expect(controller.model.setValue).toHaveBeenCalledWith({ index, value, elem });
   });
 
   it('changeValue', function() {
-    let elem = view.thumbElem.eq(0);
-    let change = view.change.eq(0);
-    let res = 95;
-    model.min = 10;
-    model.pixelsPerValue = 2.2;
-    model.position = 'horizontal';
-    controller.changeValue(elem, res);
-    expect(view.showValue).toHaveBeenCalledWith(elem, res, model.min, model.pixelsPerValue, model.position);
-    expect(elem.css('left')).toBe('187px');
-    expect(change.val()).toBe('95');
+    spyOn(controller.view, 'showValue');
+    let options = {
+      index: 'index',
+      value: 'value',
+      elem: 'elem'
+    };
+    let { index, value, elem } = options;
+    controller.changeValue({ index, value, elem });
+    expect(controller.view.showValue).toHaveBeenCalledWith({ index, value, elem, min: controller.model.min });
   });
 });

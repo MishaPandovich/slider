@@ -1,41 +1,62 @@
-import './beforeEach.js';
+import Model from '../src/js/components/Model';
 
 describe('Тесты для модели', function() {
-  it('constructor', function() {
-    expect(model.min).toBe(10);
-    expect(model.max).toBe(100);
-    expect(model.current).toBe(19);
-    expect(model.step).toBe(5);
-    expect(model.position).toBe('horizontal');
-    expect(model.hasPointer).toBeFalsy();
-    expect(model.hasInterval).toBeFalsy();
-    expect(model.calcValue).toEqual([20]);
-    expect(model.subscribers.any).toBeDefined();
+  let model;
+
+  beforeEach(function() {
+    model = new Model({
+      min: 9,
+      max: 200,
+      current: 19,
+      step: 10
+    });
   });
 
-  it('getCoords', function() {
-    model.getCoords(400, 20);
-    expect(model.rightEdge).toBe(380);
-    expect(model.pixelsPerValue).toBe(4.222222222222222);
+  it('constructor', function() {
+    expect(model.subscribers.any).toBeDefined();
+    expect(model.step).toBe(10);
+    expect(model.min).toBe(10);
+    expect(model.max).toBe(200);
+    expect(model.current).toBe(19);
+    expect(model.calcValue).toEqual([]);
   });
 
   it('setValue', function() {
-    spyOn(model, 'publish').and.callThrough();
-    let elem = document.querySelector('.slider__thumb--first');
-    model.setValue(22, elem);
-    expect(model.calcValue[0]).toBe(20, elem);
-    expect(model.publish).toHaveBeenCalledWith('changeValue', elem, 20);
+    spyOn(model, 'publish');
+    let options = {
+      index: 0,
+      value: model.current,
+      elem: {}
+    };
+    model.setValue(options);
+    expect(model.calcValue[0]).toBe(20);
+    expect(model.publish).toHaveBeenCalledWith('changeValue', {
+      index: options.index,
+      elem: options.elem,
+      value: 20
+    });
   });
 
-  it('moveTo', function() {
+  it('checkValue', function() {
     model.calcValue[0] = 20;
-    model.calcValue[1] = 90;
-    let elem = $(document.querySelector('.slider__thumb--first'));
-    expect(model.moveTo(-10, elem)).toBe(10);
-    expect(model.moveTo(110, elem)).toBe(90);
+    model.calcValue[1] = 190;
 
-    elem = $(document.querySelector('.slider__thumb--second'));
-    expect(model.moveTo(-10, elem)).toBe(20);
-    expect(model.moveTo(110, elem)).toBe(100);
+    let options = {
+      index: 0,
+      value: -10
+    };
+    expect(model.checkValue(options)).toBe(10);
+
+    options.value = 210;
+    expect(model.checkValue(options)).toBe(190);
+
+    options = {
+      index: 1,
+      value: -10
+    };
+    expect(model.checkValue(options)).toBe(20);
+
+    options.value = 210;
+    expect(model.checkValue(options)).toBe(200);
   });
 });

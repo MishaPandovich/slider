@@ -1,5 +1,5 @@
 class Controller {
-  constructor(model, view) {
+  constructor({ model, view }) {
     this.model = model,
     this.view = view
   }
@@ -10,48 +10,36 @@ class Controller {
       max: this.model.max,
       step: this.model.step
     });
+  }
 
-    for (let i = 0; i < this.view.thumbElem.length; i++) {
+  setInitialValue(thumbElem) {
+    for (let i = 0; i < thumbElem.length; i++) {
       this.model.setValue({
+        index: i,
         value: this.model.current,
-        elem: this.view.thumbElem.eq(i)
+        elem: thumbElem.eq(i)
       });
     }
   }
 
-  onDocumentMouseMove(elem, e) {
-    if (this.view.position !== 'vertical') {
-      let value = (e.clientX - this.view.shiftX - this.view.sliderCoords.left) / this.view.pixelsPerValue + this.model.min;
-      this.model.setValue({
-        value: value,
-        elem: elem
-      });
-    }
-    else {
-      let value = (e.clientY - this.view.shiftY - this.view.sliderCoords.top) / this.view.pixelsPerValue + this.model.min;
-      this.model.setValue({
-        value: value,
-        elem: elem
-      });
-    }
-  }
-
-  onInputChange(elem) {
-    elem = $(elem);
-    let thumbElem = (elem.hasClass('slider__input--first')) ? this.view.thumbElem.eq(0) : this.view.thumbElem.eq(1);
+  onDocumentMouseMove({ elem, value }) {
+    value += this.model.min;
 
     this.model.setValue({
-      value: +elem.val(),
-      elem: thumbElem
+      index: elem.index(),
+      value,
+      elem
     });
   }
 
-  changeValue(options) {
-    this.view.showValue({
-      elem: options.elem,
-      value: options.value,
-      min: this.model.min
-    });
+  onInputChange({ index, value, elem }) {
+    this.model.setValue({ index, value, elem });
+  }
+
+  changeValue({ index, value, elem }) {
+    let min = this.model.min;
+
+    this.view.showValue({ value, min, index, elem });
   }
 }
 

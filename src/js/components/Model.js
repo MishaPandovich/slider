@@ -5,44 +5,34 @@ class Model extends Observer {
     super();
     this.step = Math.round(options.step) || 1,
     this.min = Math.round(options.min / options.step) * options.step,
-    this.max = Math.trunc(options.max / options.step) * options.step,
-    this.current = options.current > options.max ? options.max : options.current,
+    this.max = Math.floor(options.max / options.step) * options.step,
+    this.current = options.current > this.max ? this.max : options.current,
     this.calcValue = []
   }
 
-  setValue(options) {
-    let elem = $(options.elem),
-        res = this.moveTo(Math.round(options.value / this.step) * this.step, elem);
-
-    if (elem.hasClass('slider__thumb--first')) {
-      this.calcValue[0] = res;
-    }
-    else {
-      this.calcValue[1] = res;
-    }
-
-    this.publish('changeValue', {
-      elem: elem,
-      value: res
+  setValue({ index, value, elem }) {
+    value = this.checkValue({
+      value: Math.round(value / this.step) * this.step,
+      index
     });
+    this.calcValue[index] = value;
+
+    this.publish('changeValue', { index, value, elem });
   }
 
-  moveTo(checkValue, elem) {
-    if (checkValue < this.min) {
-      checkValue = this.min;
+  checkValue({ value, index }) {
+    if (value < this.min) {
+      value = this.min;
     }
-    else if (checkValue > this.max) {
-      checkValue = this.max;
-    }
-
-    if (elem.hasClass('slider__thumb--first')) {
-      checkValue = (checkValue > this.calcValue[1]) ? this.calcValue[1] : checkValue;
-    }
-    else {
-      checkValue = (checkValue < this.calcValue[0]) ? this.calcValue[0] : checkValue;
+    else if (value > this.max) {
+      value = this.max;
     }
 
-    return checkValue;
+    value = index
+          ? (value < this.calcValue[0]) ? this.calcValue[0] : value
+          : (value > this.calcValue[1]) ? this.calcValue[1] : value;
+
+    return value;
   }
 }
 
