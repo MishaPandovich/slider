@@ -56,9 +56,9 @@ describe('Тесты для вью', function() {
     expect(viewThumb.viewPointer.showValueOnPointers).toHaveBeenCalledWith({ elem, value });
   });
 
-  it('elemMouseDown', function() {
+  it('onElemMouseDown', function() {
     spyOn(viewThumb, 'publish');
-    let fn = viewThumb.elemMouseDown('event');
+    let fn = viewThumb.onElemMouseDown('event');
     expect(viewThumb.publish).toHaveBeenCalledWith('onElemMouseDown', 'event');
     expect(fn).toBeFalsy();
   });

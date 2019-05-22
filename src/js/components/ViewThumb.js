@@ -18,7 +18,7 @@ class ViewThumb extends Observer {
     }
 
     let thumbElem = this.elem.find('.slider__thumb');
-    thumbElem.on('mousedown', this.elemMouseDown.bind(this));
+    thumbElem.on('mousedown', this.onElemMouseDown.bind(this));
 
     if (this.hasPointer) {
       this.addPointers({ position: this.position, thumbElem });
@@ -47,7 +47,7 @@ class ViewThumb extends Observer {
     }
   }
 
-  elemMouseDown(e) {
+  onElemMouseDown(e) {
     this.publish('onElemMouseDown', e);
     return false;
   }

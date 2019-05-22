@@ -65,7 +65,7 @@ describe('Тесты для вью', function() {
   });
 
   it('setInputs', function() {
-    spyOn(view, 'inputChange');
+    spyOn(view, 'onInputChange');
     let min = 0,
         max = 200,
         step = 20;
@@ -77,7 +77,7 @@ describe('Тесты для вью', function() {
     expect($._data(view.input[0]).events.focusout).toBeDefined();
 
     view.input.focusout();
-    expect(view.inputChange).toHaveBeenCalledWith({
+    expect(view.onInputChange).toHaveBeenCalledWith({
       elem: $(view.input),
       thumbElem
     });
@@ -111,6 +111,18 @@ describe('Тесты для вью', function() {
     expect(view.input.eq(options.index)).toHaveValue(String(options.value));
   });
 
+  it('onInputChange', function() {
+    spyOn(view, 'publish');
+    let elem = view.input.eq(0);
+    elem.val(75);
+    view.onInputChange({ elem, thumbElem });
+    expect(view.publish).toHaveBeenCalledWith('onInputChange', {
+      index: 0,
+      value: 75,
+      elem: thumbElem.eq(0)
+    });
+  });
+
   it('onElemMouseDown', function() {
     spyOn(view, 'onDocumentMouseMove').and.callThrough();
     spyOn(view, 'onDocumentMouseUp').and.callThrough();
@@ -129,18 +141,6 @@ describe('Тесты для вью', function() {
     $(document).mouseup();
     expect(view.onDocumentMouseUp).toHaveBeenCalled();
     expect($._data(document).events).not.toBeDefined();
-  });
-
-  it('inputChange', function() {
-    spyOn(view, 'publish');
-    let elem = view.input.eq(0);
-    elem.val(75);
-    view.inputChange({ elem, thumbElem });
-    expect(view.publish).toHaveBeenCalledWith('onInputChange', {
-      index: 0,
-      value: 75,
-      elem: thumbElem.eq(0)
-    });
   });
 
   it('onDocumentMouseMove', function() {

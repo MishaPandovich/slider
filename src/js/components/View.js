@@ -1,4 +1,4 @@
-import ViewScale from './ViewScale.js';
+import ViewScale from './ViewScale';
 import Observer from './Observer';
 
 class View extends Observer {
@@ -46,7 +46,7 @@ class View extends Observer {
       step
     });
 
-    this.input.on('focusout', (e) => { this.inputChange({
+    this.input.on('focusout', (e) => { this.onInputChange({
         elem: $(e.target),
         thumbElem
       })
@@ -72,6 +72,17 @@ class View extends Observer {
     this.publish('showValue', { elem, value });
   }
 
+  onInputChange({ elem, thumbElem }) {
+    let index = this.input.index(elem),
+        value = +elem.val();
+
+    this.publish('onInputChange', {
+      index,
+      value,
+      elem: thumbElem.eq(index)
+    });
+  }
+
   onElemMouseDown(e) {
     let elem = $(e.target).closest('.slider__thumb'),
         thumbCoords = elem[0].getBoundingClientRect(),
@@ -81,17 +92,6 @@ class View extends Observer {
 
     $(document).on('mousemove', this.onDocumentMouseMove.bind(this, { elem, shiftX, shiftY, sliderCoords }));
     $(document).on('mouseup', this.onDocumentMouseUp.bind(this));
-  }
-
-  inputChange({ elem, thumbElem }) {
-    let index = this.input.index(elem),
-        value = +elem.val();
-
-    this.publish('onInputChange', {
-      index,
-      value,
-      elem: thumbElem.eq(index)
-    });
   }
 
   onDocumentMouseMove({ elem, shiftX, shiftY, sliderCoords }, e) {
