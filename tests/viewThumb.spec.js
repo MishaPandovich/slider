@@ -1,7 +1,7 @@
 import ViewThumb from '../src/js/components/ViewThumb';
 
-describe('Тесты для вью', function() {
-  let viewThumb, options, thumbElem;
+describe('Тесты для ViewThumb', function() {
+  let viewThumb, options;
 
   beforeEach(function() {
     setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div><input type="number" class="slider__input"></div>');
@@ -12,7 +12,6 @@ describe('Тесты для вью', function() {
       hasInterval: true,
       hasPointer: true
     };
-    thumbElem = $('.slider__thumb');
 
     viewThumb = new ViewThumb(options);
   });
@@ -28,12 +27,12 @@ describe('Тесты для вью', function() {
   it('addThumbs', function() {
     spyOn(viewThumb, 'createThumb');
     spyOn(viewThumb, 'addPointers');
-    let thumbElem = viewThumb.addThumbs();
+    viewThumb.addThumbs();
     expect(viewThumb.createThumb).toHaveBeenCalled();
     expect(viewThumb.createThumb).toHaveBeenCalledWith('second');
-    expect(viewThumb.addPointers).toHaveBeenCalledWith({ position: viewThumb.position, thumbElem });
-    expect(thumbElem).toHaveClass('slider__thumb');
-    expect($._data(thumbElem[0]).events.mousedown).toBeDefined();
+    expect(viewThumb.addPointers).toHaveBeenCalledWith(viewThumb.position);
+    expect(viewThumb.thumbElem).toHaveClass('slider__thumb');
+    expect($._data(viewThumb.thumbElem[0]).events.mousedown).toBeDefined();
   });
 
   it('createThumb', function() {
@@ -43,17 +42,23 @@ describe('Тесты для вью', function() {
   });
 
   it('addPointers', function() {
-    viewThumb.addPointers({ position: viewThumb.position, thumbElem });
-    expect(thumbElem.children()).toHaveClass('slider__pointer');
+    viewThumb.thumbElem = $('.slider__thumb');
+    viewThumb.addPointers(viewThumb.position);
+    expect(viewThumb.viewPointer).toBeDefined();
+    expect(viewThumb.thumbElem.children()).toHaveClass('slider__pointer');
   });
 
   it('showValue', function() {
-    let elem = thumbElem,
-        value = 30;
-    viewThumb.addPointers({ position: viewThumb.position, thumbElem });
+    let index = 0,
+        value = 30,
+        css = 'top',
+        cssValue = '100px';
+    viewThumb.thumbElem = $('.slider__thumb');
+    viewThumb.addPointers(viewThumb.position);
     spyOn(viewThumb.viewPointer, 'showValueOnPointers');
-    viewThumb.showValue({ elem, value });
-    expect(viewThumb.viewPointer.showValueOnPointers).toHaveBeenCalledWith({ elem, value });
+    viewThumb.showValue({ index, value, css, cssValue });
+    expect(viewThumb.thumbElem.eq(index).css(css)).toBe(cssValue);
+    expect(viewThumb.viewPointer.showValueOnPointers).toHaveBeenCalledWith({ index, value });
   });
 
   it('onElemMouseDown', function() {

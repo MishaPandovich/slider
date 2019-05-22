@@ -17,33 +17,38 @@ class ViewThumb extends Observer {
       this.createThumb('second');
     }
 
-    let thumbElem = this.elem.find('.slider__thumb');
-    thumbElem.on('mousedown', this.onElemMouseDown.bind(this));
+    this.thumbElem = this.elem.find('.slider__thumb');
+    this.thumbElem.on('mousedown', this.onElemMouseDown.bind(this));
 
     if (this.hasPointer) {
-      this.addPointers({ position: this.position, thumbElem });
+      this.addPointers(this.position);
     }
 
-    return thumbElem;
+    return this.thumbElem;
   }
 
   createThumb(modifier='first') {
     let slider = this.elem.parent('.slider'),
-        thumbElem = $('<div class="slider__thumb">'),
+        thumb = $('<div class="slider__thumb">'),
         input = $('<input type="number" class="slider__input">');
-    thumbElem.addClass('slider__thumb--' + modifier);
+    thumb.addClass('slider__thumb--' + modifier);
     input.addClass('slider__input--' + modifier);
-    this.elem.append(thumbElem);
+    this.elem.append(thumb);
     slider.append(input);
   }
 
-  addPointers({ position, thumbElem }) {
-    this.viewPointer = new ViewPointer({ position, thumbElem });
+  addPointers(position) {
+    this.viewPointer = new ViewPointer({
+      position,
+      thumbElem: this.thumbElem
+    });
   }
 
-  showValue({ elem, value }) {
+  showValue({ index, value, css, cssValue }) {
+    this.thumbElem.eq(index).css(css, cssValue);
+
     if (this.viewPointer) {
-      this.viewPointer.showValueOnPointers({ elem, value });
+      this.viewPointer.showValueOnPointers({ index, value });
     }
   }
 

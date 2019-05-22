@@ -17,19 +17,20 @@ describe('Тесты для ViewPointer', function() {
   it('constructor', function() {
     spyOn(viewPointer, 'createPointer');
     viewPointer.constructor(options);
-    expect(viewPointer.createPointer).toHaveBeenCalledWith(options);
+    expect(viewPointer.thumbElem).toBe(options.thumbElem);
+    expect(viewPointer.createPointer).toHaveBeenCalledWith(options.position);
   });
 
   it('createPointer', function() {
-    viewPointer.createPointer(options);
-    expect(options.thumbElem.children()).toHaveClass('slider__pointer');
+    viewPointer.createPointer(options.position);
+    expect(viewPointer.thumbElem.children()).toHaveClass('slider__pointer');
   });
 
   it('showValueOnPointers', function() {
     viewPointer.showValueOnPointers({
-      elem: options.thumbElem,
+      index: 0,
       value: 50
     });
-    expect(options.thumbElem.text()).toBe('50');
+    expect(viewPointer.thumbElem.children().text()).toBe('50');
   });
 });

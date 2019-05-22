@@ -1,16 +1,17 @@
 class ViewPointer {
   constructor({ position, thumbElem }) {
-    this.createPointer({ position, thumbElem });
+    this.thumbElem = thumbElem;
+    this.createPointer(position);
   }
 
-  createPointer({ position, thumbElem }) {
+  createPointer(position) {
     let pointer = position !== 'vertical' ? '<div class="slider__pointer">' : '<div class="slider__pointer slider__pointer--left">';
-    thumbElem.append($(pointer));
+    this.thumbElem.append($(pointer));
   }
 
-  showValueOnPointers({ elem, value }) {
-    let pointer = elem.find('.slider__pointer');
-    pointer.text(value);
+  showValueOnPointers({ index, value }) {
+    let pointer = this.thumbElem.find('.slider__pointer');
+    pointer.eq(index).text(value);
   }
 }
 

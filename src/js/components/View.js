@@ -16,8 +16,10 @@ class View extends Observer {
 
     let thumbElem = this.viewThumb.addThumbs();
 
-    this.setInputs({ min, max, step, thumbElem });
     this.getCoords({ min, max, thumbElem });
+    this.setInputs({ min, max, step });
+
+    this.publish('setInitialValue', thumbElem);
 
     if (this.hasScale) {
       let options = {
@@ -38,49 +40,42 @@ class View extends Observer {
     }
   }
 
-  setInputs({ min, max, step, thumbElem }) {
-    this.input = this.slider.find('.slider__input');
-    this.input.attr({
-      min,
-      max,
-      step
-    });
-
-    this.input.on('focusout', (e) => { this.onInputChange({
-        elem: $(e.target),
-        thumbElem
-      })
-    });
-  }
-
   getCoords({ min, max, thumbElem }) {
     let rightEdge = this.position !== 'vertical'
                   ? this.elem.width() - thumbElem.width()
                   : this.elem.height() - thumbElem.height();
     this.pixelsPerValue = rightEdge / (max - min);
-
-    this.publish('setInitialValue', thumbElem);
   }
 
-  showValue({ value, min, index, elem }) {
+  setInputs({ min, max, step }) {
+    this.input = this.slider.find('.slider__input');
+    this.input.attr({ min, max, step });
+    this.input.on('focusout', (e) => { this.onInputChange($(e.target)) });
+  }
+
+  changeInputsAttr({ index, value }) {
+    if (index === 0) {
+      if (this.input.eq(1)) {
+        this.input.eq(1).attr('min', value);
+      }
+    }
+    else {
+      this.input.eq(0).attr('max', value);
+    }
+  }
+
+  showValue({ index, value, min }) {
     let css = this.position !== 'vertical' ? 'left' : 'top',
-        cssValue = (value - min) * this.pixelsPerValue;
-
-    elem.css(css, cssValue + 'px');
+        cssValue = (value - min) * this.pixelsPerValue + 'px';
     this.input.eq(index).val(value);
-
-    this.publish('showValue', { elem, value });
+    this.publish('showValue', { index, value, css, cssValue });
   }
 
-  onInputChange({ elem, thumbElem }) {
+  onInputChange(elem) {
     let index = this.input.index(elem),
         value = +elem.val();
 
-    this.publish('onInputChange', {
-      index,
-      value,
-      elem: thumbElem.eq(index)
-    });
+    this.publish('onInputChange', { index, value });
   }
 
   onElemMouseDown(e) {

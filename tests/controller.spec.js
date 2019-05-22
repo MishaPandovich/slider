@@ -46,8 +46,7 @@ describe('Тесты для контроллера', function() {
     controller.setInitialValue(thumbElem);
     expect(controller.model.setValue).toHaveBeenCalledWith({
       index: 0,
-      value: controller.model.current,
-      elem: thumbElem.eq(0)
+      value: controller.model.current
     });
   });
 
@@ -56,32 +55,25 @@ describe('Тесты для контроллера', function() {
     controller.onDocumentMouseMove({ elem: thumbElem, value: 30 });
     expect(controller.model.setValue).toHaveBeenCalledWith({
       index: 0,
-      value: 40,
-      elem: thumbElem
+      value: 40
     });
   });
 
   it('onInputChange', function() {
     spyOn(controller.model, 'setValue');
-    let options = {
-      index: 'index',
-      value: 'value',
-      elem: 'elem'
-    };
-    let { index, value, elem } = options;
-    controller.onInputChange({ index, value, elem });
-    expect(controller.model.setValue).toHaveBeenCalledWith({ index, value, elem });
+    let index = 'index',
+        value = 'value';
+    controller.onInputChange({ index, value });
+    expect(controller.model.setValue).toHaveBeenCalledWith({ index, value });
   });
 
   it('changeValue', function() {
+    spyOn(controller.view, 'changeInputsAttr');
     spyOn(controller.view, 'showValue');
-    let options = {
-      index: 'index',
-      value: 'value',
-      elem: 'elem'
-    };
-    let { index, value, elem } = options;
-    controller.changeValue({ index, value, elem });
-    expect(controller.view.showValue).toHaveBeenCalledWith({ index, value, elem, min: controller.model.min });
+    let index = 'index',
+        value = 'value';
+    controller.changeValue({ index, value });
+    expect(controller.view.changeInputsAttr).toHaveBeenCalledWith({ index, value });
+    expect(controller.view.showValue).toHaveBeenCalledWith({ index, value, min: controller.model.min });
   });
 });

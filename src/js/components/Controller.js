@@ -16,8 +16,7 @@ class Controller {
     for (let i = 0; i < thumbElem.length; i++) {
       this.model.setValue({
         index: i,
-        value: this.model.current,
-        elem: thumbElem.eq(i)
+        value: this.model.current
       });
     }
   }
@@ -27,19 +26,17 @@ class Controller {
 
     this.model.setValue({
       index: elem.index(),
-      value,
-      elem
+      value
     });
   }
 
-  onInputChange({ index, value, elem }) {
-    this.model.setValue({ index, value, elem });
+  onInputChange({ index, value }) {
+    this.model.setValue({ index, value });
   }
 
-  changeValue({ index, value, elem }) {
-    let min = this.model.min;
-
-    this.view.showValue({ value, min, index, elem });
+  changeValue({ index, value }) {
+    this.view.changeInputsAttr({ index, value });
+    this.view.showValue({ index, value, min: this.model.min });
   }
 }
 

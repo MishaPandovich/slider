@@ -6,12 +6,12 @@ describe('Тесты для вью', function() {
       fn = function() { return 'fn'; };
 
   beforeEach(function() {
-    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div><input type="number" class="slider__input"></div>');
+    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div><div class="slider__thumb"></div></div><input type="number" class="slider__input"></div><input type="number" class="slider__input"></div>');
 
     viewThumb = new ViewThumb({
       elem: $('.slider__runner'),
       position: 'horizontal',
-      hasInterval: false,
+      hasInterval: true,
       hasPointer: false
     });
 
@@ -42,19 +42,20 @@ describe('Тесты для вью', function() {
   it('init', function() {
     spyOn(view, 'showPosition');
     spyOn(view.viewThumb, 'addThumbs');
-    spyOn(view, 'setInputs');
     spyOn(view, 'getCoords');
+    spyOn(view, 'setInputs');
+    spyOn(view, 'publish');
     view.hasScale = true;
-    let options = {
-      min: 10,
-      max: 50,
-      step: 5
-    };
-    view.init(options);
+    let min = 10,
+        max = 50,
+        step = 5,
+        thumbElem = view.viewThumb.addThumbs();
+    view.init({ min, max, step });
     expect(view.showPosition).toHaveBeenCalled();
     expect(view.viewThumb.addThumbs).toHaveBeenCalled();
-    expect(view.setInputs).toHaveBeenCalled();
     expect(view.getCoords).toHaveBeenCalled();
+    expect(view.setInputs).toHaveBeenCalled();
+    expect(view.publish).toHaveBeenCalledWith('setInitialValue', thumbElem);
     expect(view.viewScale).toBeDefined();
   });
 
@@ -64,12 +65,19 @@ describe('Тесты для вью', function() {
     expect(view.elem).toHaveClass('slider__runner--vertical');
   });
 
+  it('getCoords', function() {
+    let min = 0,
+        max = 200;
+    view.getCoords({ min, max, thumbElem });
+    expect(view.pixelsPerValue).toBe(2);
+  });
+
   it('setInputs', function() {
     spyOn(view, 'onInputChange');
     let min = 0,
         max = 200,
         step = 20;
-    view.setInputs({ min, max, step, thumbElem });
+    view.setInputs({ min, max, step });
     expect(view.input).toHaveClass('slider__input');
     expect(view.input.attr('min')).toBe(String(min));
     expect(view.input.attr('max')).toBe(String(max));
@@ -77,49 +85,55 @@ describe('Тесты для вью', function() {
     expect($._data(view.input[0]).events.focusout).toBeDefined();
 
     view.input.focusout();
-    expect(view.onInputChange).toHaveBeenCalledWith({
-      elem: $(view.input),
-      thumbElem
-    });
+    expect(view.onInputChange).toHaveBeenCalledWith($(view.input));
   });
 
-  it('getCoords', function() {
-    spyOn(view, 'publish');
-    let min = 0,
-        max = 200;
-    view.getCoords({ min, max, thumbElem });
-    expect(view.pixelsPerValue).toBe(2);
-    expect(view.publish).toHaveBeenCalledWith('setInitialValue', thumbElem);
+  it('changeInputsAttr', function() {
+    let index = 0,
+        value = 50;
+    view.changeInputsAttr({ index, value });
+    expect(view.input.eq(1).attr('min')).toBe(String(value));
+
+    index = 1;
+    view.changeInputsAttr({ index, value });
+    expect(view.input.eq(0).attr('max')).toBe(String(value));
   });
 
   it('showValue', function() {
-    let options = {
-      value: 60,
-      min: 10,
-      index: 0,
-      elem: thumbElem
-    };
-    view.showValue(options);
-    expect(options.elem.css('left')).toBe('100px');
-    expect(view.input.eq(options.index)).toHaveValue(String(options.value));
+    spyOn(view, 'publish');
+    let index = 0,
+        value = 60,
+        min = 10;
+    view.showValue({ index, value, min });
+    expect(view.input.eq(index)).toHaveValue(String(value));
+    expect(view.publish).toHaveBeenCalledWith('showValue', {
+      index,
+      value,
+      css: 'left',
+      cssValue: '100px'
+    });
 
     view.position = 'vertical';
-    options.value = 70;
-    options.min = 5;
-    view.showValue(options);
-    expect(options.elem.css('top')).toBe('130px');
-    expect(view.input.eq(options.index)).toHaveValue(String(options.value));
+    value = 70;
+    min = 5;
+    view.showValue({ index, value, min });
+    expect(view.input.eq(index)).toHaveValue(String(value));
+    expect(view.publish).toHaveBeenCalledWith('showValue', {
+      index,
+      value,
+      css: 'top',
+      cssValue: '130px'
+    });
   });
 
   it('onInputChange', function() {
     spyOn(view, 'publish');
     let elem = view.input.eq(0);
     elem.val(75);
-    view.onInputChange({ elem, thumbElem });
+    view.onInputChange(elem);
     expect(view.publish).toHaveBeenCalledWith('onInputChange', {
       index: 0,
-      value: 75,
-      elem: thumbElem.eq(0)
+      value: 75
     });
   });
 

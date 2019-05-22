@@ -25,14 +25,12 @@ describe('Тесты для модели', function() {
     spyOn(model, 'publish');
     let options = {
       index: 0,
-      value: model.current,
-      elem: {}
+      value: model.current
     };
     model.setValue(options);
     expect(model.calcValue[0]).toBe(20);
     expect(model.publish).toHaveBeenCalledWith('changeValue', {
       index: options.index,
-      elem: options.elem,
       value: 20
     });
   });

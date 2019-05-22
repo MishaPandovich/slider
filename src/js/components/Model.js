@@ -10,14 +10,13 @@ class Model extends Observer {
     this.calcValue = []
   }
 
-  setValue({ index, value, elem }) {
+  setValue({ index, value }) {
     value = this.checkValue({
       value: Math.round(value / this.step) * this.step,
       index
     });
     this.calcValue[index] = value;
-
-    this.publish('changeValue', { index, value, elem });
+    this.publish('changeValue', { index, value });
   }
 
   checkValue({ value, index }) {
