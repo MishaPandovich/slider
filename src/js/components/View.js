@@ -69,6 +69,7 @@ class View extends Observer {
         cssValue = (value - min) * this.pixelsPerValue + 'px';
     this.input.eq(index).val(value);
     this.publish('showValue', { index, value, css, cssValue });
+    this.publish('showTracker');
   }
 
   onInputChange(elem) {

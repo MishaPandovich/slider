@@ -44,6 +44,7 @@ import Controller from './components/Controller';
     view.subscribe('onDocumentMouseMove', controller.onDocumentMouseMove.bind(controller));
     view.subscribe('setInitialValue', controller.setInitialValue.bind(controller));
     view.subscribe('showValue', viewThumb.showValue.bind(viewThumb));
+    view.subscribe('showTracker', viewThumb.showTracker.bind(viewThumb));
     viewThumb.subscribe('onElemMouseDown', view.onElemMouseDown.bind(view));
 
     controller.initPlugin();

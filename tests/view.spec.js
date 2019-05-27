@@ -6,7 +6,7 @@ describe('Тесты для вью', function() {
       fn = function() { return 'fn'; };
 
   beforeEach(function() {
-    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div><div class="slider__thumb"></div></div><input type="number" class="slider__input"></div><input type="number" class="slider__input"></div>');
+    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div><div class="slider__thumb"></div></div><input type="number" class="slider__input"><input type="number" class="slider__input"></div>');
 
     viewThumb = new ViewThumb({
       elem: $('.slider__runner'),
@@ -84,8 +84,8 @@ describe('Тесты для вью', function() {
     expect(view.input.attr('step')).toBe(String(step));
     expect($._data(view.input[0]).events.focusout).toBeDefined();
 
-    view.input.focusout();
-    expect(view.onInputChange).toHaveBeenCalledWith($(view.input));
+    view.input.eq(0).focusout();
+    expect(view.onInputChange).toHaveBeenCalledWith($(view.input.eq(0)));
   });
 
   it('changeInputsAttr', function() {
@@ -101,6 +101,7 @@ describe('Тесты для вью', function() {
 
   it('showValue', function() {
     spyOn(view, 'publish');
+    view.position = 'horizontal';
     let index = 0,
         value = 60,
         min = 10;

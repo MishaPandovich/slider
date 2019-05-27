@@ -4,7 +4,7 @@ describe('Тесты для ViewPointer', function() {
   let viewPointer, options;
 
   beforeEach(function() {
-    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div><input type="number" class="slider__input"></div>');
+    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div></div>');
 
     options = {
       position: 'horizontal',

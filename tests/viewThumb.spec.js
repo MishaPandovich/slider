@@ -4,7 +4,7 @@ describe('Тесты для ViewThumb', function() {
   let viewThumb, options;
 
   beforeEach(function() {
-    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div><input type="number" class="slider__input"></div>');
+    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"></div></div>');
 
     options = {
       elem: $('#slider1').find('.slider__runner'),
@@ -14,6 +14,7 @@ describe('Тесты для ViewThumb', function() {
     };
 
     viewThumb = new ViewThumb(options);
+    viewThumb.addThumbs();
   });
 
   it('constructor', function() {
@@ -32,6 +33,8 @@ describe('Тесты для ViewThumb', function() {
     expect(viewThumb.createThumb).toHaveBeenCalledWith('second');
     expect(viewThumb.addPointers).toHaveBeenCalledWith(viewThumb.position);
     expect(viewThumb.thumbElem).toHaveClass('slider__thumb');
+    expect(viewThumb.tracker).toHaveClass('slider__tracker');
+    expect(viewThumb.tracker.parent()).toHaveClass('slider__runner');
     expect($._data(viewThumb.thumbElem[0]).events.mousedown).toBeDefined();
   });
 
@@ -42,7 +45,6 @@ describe('Тесты для ViewThumb', function() {
   });
 
   it('addPointers', function() {
-    viewThumb.thumbElem = $('.slider__thumb');
     viewThumb.addPointers(viewThumb.position);
     expect(viewThumb.viewPointer).toBeDefined();
     expect(viewThumb.thumbElem.children()).toHaveClass('slider__pointer');
@@ -53,12 +55,23 @@ describe('Тесты для ViewThumb', function() {
         value = 30,
         css = 'top',
         cssValue = '100px';
-    viewThumb.thumbElem = $('.slider__thumb');
     viewThumb.addPointers(viewThumb.position);
     spyOn(viewThumb.viewPointer, 'showValueOnPointers');
     viewThumb.showValue({ index, value, css, cssValue });
     expect(viewThumb.thumbElem.eq(index).css(css)).toBe(cssValue);
     expect(viewThumb.viewPointer.showValueOnPointers).toHaveBeenCalledWith({ index, value });
+  });
+
+  it('showTracker', function() {
+    viewThumb.position = 'horizontal';
+    viewThumb.showTracker();
+    expect(viewThumb.tracker.css('left')).toBe(parseInt(viewThumb.thumbElem.eq(0).css('left')) + viewThumb.thumbElem.width() - 2 + 'px');
+    expect(viewThumb.tracker.css('right')).toBe(viewThumb.elem.width() - parseInt(viewThumb.thumbElem.css('left')) - 2 + 'px');
+
+    viewThumb.position = 'vertical';
+    viewThumb.showTracker();
+    expect(viewThumb.tracker.css('top')).toBe(parseInt(viewThumb.thumbElem.eq(0).css('top')) + viewThumb.thumbElem.height() - 2 + 'px');
+    expect(viewThumb.tracker.css('bottom')).toBe(viewThumb.elem.height() - parseInt(viewThumb.thumbElem.css('top')) - 2 + 'px');
   });
 
   it('onElemMouseDown', function() {
