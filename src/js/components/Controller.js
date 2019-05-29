@@ -16,7 +16,7 @@ class Controller {
     for (let i = 0; i < thumbElem.length; i++) {
       this.model.setValue({
         index: i,
-        value: this.model.current
+        value: this.model.current[i]
       });
     }
   }
@@ -35,7 +35,6 @@ class Controller {
   }
 
   changeValue({ index, value }) {
-    this.view.changeInputsAttr({ index, value });
     this.view.showValue({ index, value, min: this.model.min });
   }
 }

@@ -4,21 +4,20 @@ import Observer from './Observer';
 class View extends Observer {
   constructor(options) {
     super();
-    this.slider = $(options.slider);
+    this.slider = options.slider;
     this.elem = this.slider.find('.slider__runner');
-    this.position = options.position;
+    this.isVertical = options.isVertical;
     this.hasScale = options.hasScale;
     this.viewThumb = options.viewThumb;
+    this.viewOptions = options.viewOptions;
   }
 
   init({ min, max, step }) {
-    this.showPosition();
+    this.showOrientation();
+    this.viewOptions.setInputs({ min, max, step });
 
     let thumbElem = this.viewThumb.addThumbs();
-
     this.getCoords({ min, max, thumbElem });
-    this.setInputs({ min, max, step });
-
     this.publish('setInitialValue', thumbElem);
 
     if (this.hasScale) {
@@ -26,56 +25,43 @@ class View extends Observer {
         min,
         max,
         step,
-        position: this.position,
+        isVertical: this.isVertical,
         pixelsPerValue: this.pixelsPerValue,
         elem: this.elem
       };
-      this.viewScale = new ViewScale(options);
+      new ViewScale(options);
+    }
+    else {
+      let ul = $('<ul class="slider__scale">');
+      this.elem.append(ul);
+      ul.css('opacity', 0);
     }
   }
 
-  showPosition() {
-    if (this.position === 'vertical') {
+  showOrientation() {
+    if (this.isVertical) {
       this.elem.addClass('slider__runner--vertical');
+    }
+    else {
+      this.elem.removeClass('slider__runner--vertical');
     }
   }
 
   getCoords({ min, max, thumbElem }) {
-    let rightEdge = this.position !== 'vertical'
+    let rightEdge = !this.isVertical
                   ? this.elem.width() - thumbElem.width()
                   : this.elem.height() - thumbElem.height();
     this.pixelsPerValue = rightEdge / (max - min);
   }
 
-  setInputs({ min, max, step }) {
-    this.input = this.slider.find('.slider__input');
-    this.input.attr({ min, max, step });
-    this.input.on('focusout', (e) => { this.onInputChange($(e.target)) });
-  }
-
-  changeInputsAttr({ index, value }) {
-    if (index === 0) {
-      if (this.input.eq(1)) {
-        this.input.eq(1).attr('min', value);
-      }
-    }
-    else {
-      this.input.eq(0).attr('max', value);
-    }
-  }
-
   showValue({ index, value, min }) {
-    let css = this.position !== 'vertical' ? 'left' : 'top',
+    let css = !this.isVertical ? 'left' : 'top',
         cssValue = (value - min) * this.pixelsPerValue + 'px';
-    this.input.eq(index).val(value);
+
     this.publish('showValue', { index, value, css, cssValue });
-    this.publish('showTracker');
   }
 
-  onInputChange(elem) {
-    let index = this.input.index(elem),
-        value = +elem.val();
-
+  onInputChange({ index, value }) {
     this.publish('onInputChange', { index, value });
   }
 
@@ -87,20 +73,22 @@ class View extends Observer {
         sliderCoords = elem[0].parentElement.getBoundingClientRect();
 
     $(document).on('mousemove', this.onDocumentMouseMove.bind(this, { elem, shiftX, shiftY, sliderCoords }));
-    $(document).on('mouseup', this.onDocumentMouseUp.bind(this));
+    $(document).on('mouseup', this.onDocumentMouseUp.bind(this, elem));
   }
 
   onDocumentMouseMove({ elem, shiftX, shiftY, sliderCoords }, e) {
-    let value = this.position !== 'vertical'
+    let value = !this.isVertical
               ? (e.clientX - shiftX - sliderCoords.left) / this.pixelsPerValue
               : (e.clientY - shiftY - sliderCoords.top) / this.pixelsPerValue;
 
     this.publish('onDocumentMouseMove', { elem, value });
   }
 
-  onDocumentMouseUp() {
+  onDocumentMouseUp(elem) {
     $(document).off('mousemove');
     $(document).off('mouseup');
+
+    this.publish('updateThumbs', elem.index());
   }
 }
 

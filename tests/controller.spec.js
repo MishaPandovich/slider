@@ -46,7 +46,7 @@ describe('Тесты для контроллера', function() {
     controller.setInitialValue(thumbElem);
     expect(controller.model.setValue).toHaveBeenCalledWith({
       index: 0,
-      value: controller.model.current
+      value: controller.model.current[0]
     });
   });
 
@@ -68,12 +68,10 @@ describe('Тесты для контроллера', function() {
   });
 
   it('changeValue', function() {
-    spyOn(controller.view, 'changeInputsAttr');
     spyOn(controller.view, 'showValue');
     let index = 'index',
         value = 'value';
     controller.changeValue({ index, value });
-    expect(controller.view.changeInputsAttr).toHaveBeenCalledWith({ index, value });
     expect(controller.view.showValue).toHaveBeenCalledWith({ index, value, min: controller.model.min });
   });
 });

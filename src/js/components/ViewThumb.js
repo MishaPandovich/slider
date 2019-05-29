@@ -2,10 +2,10 @@ import ViewPointer from './ViewPointer.js';
 import Observer from './Observer';
 
 class ViewThumb extends Observer {
-  constructor({ elem, position, hasInterval, hasPointer }) {
+  constructor({ elem, isVertical, hasInterval, hasPointer }) {
     super();
     this.elem = elem;
-    this.position = position;
+    this.isVertical = isVertical;
     this.hasInterval = hasInterval;
     this.hasPointer = hasPointer;
   }
@@ -21,7 +21,7 @@ class ViewThumb extends Observer {
     this.thumbElem.on('mousedown', this.onElemMouseDown.bind(this));
 
     if (this.hasPointer) {
-      this.addPointers(this.position);
+      this.addPointers();
     }
 
     this.elem.append($('<div class="slider__tracker">'));
@@ -31,18 +31,14 @@ class ViewThumb extends Observer {
   }
 
   createThumb(modifier='first') {
-    let slider = this.elem.parent('.slider'),
-        thumb = $('<div class="slider__thumb">'),
-        input = $('<input type="number" class="slider__input">');
+    let thumb = $('<div class="slider__thumb">');
     thumb.addClass('slider__thumb--' + modifier);
-    input.addClass('slider__input--' + modifier);
     this.elem.append(thumb);
-    slider.append(input);
   }
 
-  addPointers(position) {
+  addPointers() {
     this.viewPointer = new ViewPointer({
-      position,
+      isVertical: this.isVertical,
       thumbElem: this.thumbElem
     });
   }
@@ -53,10 +49,12 @@ class ViewThumb extends Observer {
     if (this.viewPointer) {
       this.viewPointer.showValueOnPointers({ index, value });
     }
+
+    this.showTracker();
   }
 
   showTracker() {
-    if (this.position !== 'vertical') {
+    if (!this.isVertical) {
       var css1 = 'left',
           css2 = 'right',
           elemSize = this.elem.width(),
@@ -70,7 +68,8 @@ class ViewThumb extends Observer {
     }
 
     if (this.thumbElem.length === 1) {
-      this.tracker.css(css1, 1);
+      this.tracker.addClass('slider__tracker--rounded');
+      this.tracker.css(css1, 0);
       this.tracker.css(css2, elemSize - parseInt(this.thumbElem.css(css1)) - 2);
     }
     else {

@@ -3,8 +3,8 @@ import './js/slider.js';
 
 $('#slider1').mySlider({
   min: 9,
-  max: 200,
-  current: 19,
+  max: 150,
+  current: [100, 115],
   step: 10,
   hasInterval: true
 });
@@ -12,8 +12,7 @@ $('#slider1').mySlider({
 $('#slider2').mySlider({
   min: 20,
   max: 100,
-  current: 35,
-  step: 10,
-  position: 'vertical',
-  hasInterval: false
+  current: 36,
+  step: 15,
+  isVertical: true
 });

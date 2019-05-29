@@ -1,9 +1,9 @@
 class ViewScale {
-  constructor({ min, max, step, position, pixelsPerValue, elem }) {
-    this.createScale({ min, max, step, position, pixelsPerValue, elem });
+  constructor({ min, max, step, isVertical, pixelsPerValue, elem }) {
+    this.createScale({ min, max, step, isVertical, pixelsPerValue, elem });
   }
 
-  createScale({ min, max, step, position, pixelsPerValue, elem }) {
+  createScale({ min, max, step, isVertical, pixelsPerValue, elem }) {
     let value = min,
         cssValue = 0,
         count = (max - min) / step;
@@ -13,7 +13,7 @@ class ViewScale {
       step *= 2;
     }
 
-    if (position !== 'vertical') {
+    if (!isVertical) {
       var ul = $('<ul class="slider__scale">'),
           css = 'left';
     }

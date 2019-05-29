@@ -16,6 +16,7 @@ class Model extends Observer {
       index
     });
     this.calcValue[index] = value;
+
     this.publish('changeValue', { index, value });
   }
 

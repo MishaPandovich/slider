@@ -7,7 +7,7 @@ describe('Тесты для ViewPointer', function() {
     setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div></div>');
 
     options = {
-      position: 'horizontal',
+      isVertical: false,
       thumbElem: $('#slider1').find('.slider__thumb')
     };
 
@@ -18,19 +18,18 @@ describe('Тесты для ViewPointer', function() {
     spyOn(viewPointer, 'createPointer');
     viewPointer.constructor(options);
     expect(viewPointer.thumbElem).toBe(options.thumbElem);
-    expect(viewPointer.createPointer).toHaveBeenCalledWith(options.position);
+    expect(viewPointer.createPointer).toHaveBeenCalledWith(options.isVertical);
   });
 
   it('createPointer', function() {
-    viewPointer.createPointer(options.position);
+    viewPointer.createPointer(options.isVertical);
     expect(viewPointer.thumbElem.children()).toHaveClass('slider__pointer');
   });
 
   it('showValueOnPointers', function() {
-    viewPointer.showValueOnPointers({
-      index: 0,
-      value: 50
-    });
-    expect(viewPointer.thumbElem.children().text()).toBe('50');
+    let index = 0,
+        value = 50;
+    viewPointer.showValueOnPointers({ index, value });
+    expect(viewPointer.thumbElem.eq(index).children().text()).toBe(String(value));
   });
 });

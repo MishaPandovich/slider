@@ -10,7 +10,7 @@ describe('Тесты для ViewScale', function() {
       min: 10,
       max: 50,
       step: 5,
-      position: 'horizontal',
+      isVertical: false,
       pixelsPerValue: 2,
       elem: $('#slider1').find('.slider__runner')
     };

@@ -1,68 +1,82 @@
 import View from '../src/js/components/View';
 import ViewThumb from '../src/js/components/ViewThumb';
+import ViewOptions from '../src/js/components/ViewOptions';
 
 describe('Тесты для вью', function() {
-  let view, viewThumb, thumbElem,
-      fn = function() { return 'fn'; };
+  let view, viewThumb, viewOptions, thumbElem,
+      fn = function() { return 'fn' };
 
   beforeEach(function() {
-    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div><div class="slider__thumb"></div></div><input type="number" class="slider__input"><input type="number" class="slider__input"></div>');
+    setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div></div></div>');
 
     viewThumb = new ViewThumb({
       elem: $('.slider__runner'),
-      position: 'horizontal',
+      isVertical: false,
       hasInterval: true,
       hasPointer: false
     });
 
+    viewOptions = new ViewOptions({
+      slider: $('#slider1'),
+      isVertical: false,
+      hasInterval: true,
+      hasPointer: false,
+      hasScale: false
+    });
+
     view = new View({
       slider: $('#slider1'),
-      position: 'horizontal',
+      isVertical: false,
       hasScale: false,
-      viewThumb
+      viewThumb,
+      viewOptions
     });
 
     view.pixelsPerValue = 2;
-    view.input = $('.slider__input');
     thumbElem = $('.slider__thumb');
 
     view.subscribe('onDocumentMouseMove', fn);
-    view.subscribe('showValue', fn);
+    view.subscribe('updateThumbs', fn);
   });
 
   it('constructor', function() {
     expect(view.subscribers.any).toBeDefined();
     expect(view.slider).toHaveClass('slider');
     expect(view.elem).toHaveClass('slider__runner');
-    expect(view.position).toBe('horizontal');
+    expect(view.isVertical).toBeFalsy();
     expect(view.hasScale).toBeFalsy();
     expect(view.viewThumb).toBe(viewThumb);
+    expect(view.viewOptions).toBe(viewOptions);
   });
 
   it('init', function() {
-    spyOn(view, 'showPosition');
+    spyOn(view, 'showOrientation');
+    spyOn(view.viewOptions, 'setInputs');
     spyOn(view.viewThumb, 'addThumbs');
     spyOn(view, 'getCoords');
-    spyOn(view, 'setInputs');
     spyOn(view, 'publish');
-    view.hasScale = true;
     let min = 10,
         max = 50,
         step = 5,
         thumbElem = view.viewThumb.addThumbs();
     view.init({ min, max, step });
-    expect(view.showPosition).toHaveBeenCalled();
+    expect(view.showOrientation).toHaveBeenCalled();
+    expect(view.viewOptions.setInputs).toHaveBeenCalledWith({ min, max, step });
     expect(view.viewThumb.addThumbs).toHaveBeenCalled();
-    expect(view.getCoords).toHaveBeenCalled();
-    expect(view.setInputs).toHaveBeenCalled();
+    expect(view.getCoords).toHaveBeenCalledWith({ min, max, thumbElem });
     expect(view.publish).toHaveBeenCalledWith('setInitialValue', thumbElem);
-    expect(view.viewScale).toBeDefined();
+    expect(view.elem.children()).toHaveClass('slider__scale');
+    expect(view.elem.find('.slider__scale').css('opacity')).toBe('0');
   });
 
-  it('showPosition', function() {
-    view.position = 'vertical';
-    view.showPosition();
+  it('showOrientation', function() {
+    view.isVertical = true;
+    view.showOrientation();
     expect(view.elem).toHaveClass('slider__runner--vertical');
+
+    view.isVertical = false;
+    view.showOrientation();
+    expect(view.elem).not.toHaveClass('slider__runner--vertical');
   });
 
   it('getCoords', function() {
@@ -72,41 +86,13 @@ describe('Тесты для вью', function() {
     expect(view.pixelsPerValue).toBe(2);
   });
 
-  it('setInputs', function() {
-    spyOn(view, 'onInputChange');
-    let min = 0,
-        max = 200,
-        step = 20;
-    view.setInputs({ min, max, step });
-    expect(view.input).toHaveClass('slider__input');
-    expect(view.input.attr('min')).toBe(String(min));
-    expect(view.input.attr('max')).toBe(String(max));
-    expect(view.input.attr('step')).toBe(String(step));
-    expect($._data(view.input[0]).events.focusout).toBeDefined();
-
-    view.input.eq(0).focusout();
-    expect(view.onInputChange).toHaveBeenCalledWith($(view.input.eq(0)));
-  });
-
-  it('changeInputsAttr', function() {
-    let index = 0,
-        value = 50;
-    view.changeInputsAttr({ index, value });
-    expect(view.input.eq(1).attr('min')).toBe(String(value));
-
-    index = 1;
-    view.changeInputsAttr({ index, value });
-    expect(view.input.eq(0).attr('max')).toBe(String(value));
-  });
-
   it('showValue', function() {
     spyOn(view, 'publish');
-    view.position = 'horizontal';
+    view.isVertical = false;
     let index = 0,
         value = 60,
         min = 10;
     view.showValue({ index, value, min });
-    expect(view.input.eq(index)).toHaveValue(String(value));
     expect(view.publish).toHaveBeenCalledWith('showValue', {
       index,
       value,
@@ -114,11 +100,10 @@ describe('Тесты для вью', function() {
       cssValue: '100px'
     });
 
-    view.position = 'vertical';
+    view.isVertical = true;
     value = 70;
     min = 5;
     view.showValue({ index, value, min });
-    expect(view.input.eq(index)).toHaveValue(String(value));
     expect(view.publish).toHaveBeenCalledWith('showValue', {
       index,
       value,
@@ -129,13 +114,10 @@ describe('Тесты для вью', function() {
 
   it('onInputChange', function() {
     spyOn(view, 'publish');
-    let elem = view.input.eq(0);
-    elem.val(75);
-    view.onInputChange(elem);
-    expect(view.publish).toHaveBeenCalledWith('onInputChange', {
-      index: 0,
-      value: 75
-    });
+    let index = 0,
+        value = 75;
+    view.onInputChange({ index, value });
+    expect(view.publish).toHaveBeenCalledWith('onInputChange', { index, value });
   });
 
   it('onElemMouseDown', function() {
@@ -147,11 +129,11 @@ describe('Тесты для вью', function() {
       target: thumbElem[0]
     };
     view.onElemMouseDown(e);
+    expect($._data(document).events.mousemove).toBeDefined();
+    expect($._data(document).events.mouseup).toBeDefined();
 
     $(document).mousemove();
     expect(view.onDocumentMouseMove).toHaveBeenCalled();
-    expect($._data(document).events.mousemove).toBeDefined();
-    expect($._data(document).events.mouseup).toBeDefined();
 
     $(document).mouseup();
     expect(view.onDocumentMouseUp).toHaveBeenCalled();
@@ -166,12 +148,20 @@ describe('Тесты для вью', function() {
           shiftY: 10,
           sliderCoords: { top: 25, left: 40 }
         };
-    view.onDocumentMouseMove(options, { clientX: 94, clientY: 55 });
-    expect(view.publish).toHaveBeenCalledWith('onDocumentMouseMove', { elem: options.elem, value: 24.5 });
+    view.onDocumentMouseMove(options, {
+      clientX: 94,
+      clientY: 55
+    });
+    expect(view.publish).toHaveBeenCalledWith('onDocumentMouseMove', {
+      elem: options.elem,
+      value: 24.5
+    });
   });
 
   it('onDocumentMouseUp', function() {
-    view.onDocumentMouseUp();
+    spyOn(view, 'publish');
+    view.onDocumentMouseUp(thumbElem.eq(0));
     expect($._data(document).events).not.toBeDefined();
+    expect(view.publish).toHaveBeenCalledWith('updateThumbs', 0);
   });
 });

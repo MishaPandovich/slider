@@ -1,6 +1,7 @@
 import Model from './components/Model';
 import View from './components/View';
 import ViewThumb from './components/ViewThumb';
+import ViewOptions from './components/ViewOptions';
 import Controller from './components/Controller';
 
 (function($) {
@@ -8,45 +9,95 @@ import Controller from './components/Controller';
     options = $.extend({
       min: 0,
       max: 100,
-      current: 0,
+      current: [0, 10],
       step: 1,
-      position: 'horizontal',
+      isVertical: false,
       hasInterval: false,
       hasPointer: true,
       hasScale: true
     }, options);
 
-    const model = new Model({
-      min: options.min,
-      max: options.max,
-      current: options.current,
-      step: options.step
-    });
+    if (!$.isArray(options.current)) {
+      options.current = [options.current, options.current];
+    }
+    else if (options.current.length === 1) {
+      options.current[1] = options.current[0];
+    }
 
-    const viewThumb = new ViewThumb({
-      elem: $(this).find('.slider__runner'),
-      position: options.position,
-      hasInterval: options.hasInterval,
-      hasPointer: options.hasPointer
-    });
+    let init = () => {
+      const model = new Model({
+        min: options.min,
+        max: options.max,
+        current: options.current,
+        step: options.step
+      });
 
-    const view = new View({
-      slider: this,
-      position: options.position,
-      hasScale: options.hasScale,
-      viewThumb
-    });
+      const viewThumb = new ViewThumb({
+        elem: this.find('.slider__runner'),
+        isVertical: options.isVertical,
+        hasInterval: options.hasInterval,
+        hasPointer: options.hasPointer
+      });
 
-    const controller = new Controller({ model, view });
+      const viewOptions = new ViewOptions({
+        slider: this,
+        isVertical: options.isVertical,
+        hasInterval: options.hasInterval,
+        hasPointer: options.hasPointer,
+        hasScale: options.hasScale
+      });
 
-    model.subscribe('changeValue', controller.changeValue.bind(controller));
-    view.subscribe('onInputChange', controller.onInputChange.bind(controller));
-    view.subscribe('onDocumentMouseMove', controller.onDocumentMouseMove.bind(controller));
-    view.subscribe('setInitialValue', controller.setInitialValue.bind(controller));
-    view.subscribe('showValue', viewThumb.showValue.bind(viewThumb));
-    view.subscribe('showTracker', viewThumb.showTracker.bind(viewThumb));
-    viewThumb.subscribe('onElemMouseDown', view.onElemMouseDown.bind(view));
+      const view = new View({
+        slider: this,
+        isVertical: options.isVertical,
+        hasScale: options.hasScale,
+        viewThumb,
+        viewOptions
+      });
 
-    controller.initPlugin();
+      const controller = new Controller({ model, view });
+
+      model.subscribe('changeValue', controller.changeValue.bind(controller));
+      view.subscribe('onDocumentMouseMove', controller.onDocumentMouseMove.bind(controller));
+      view.subscribe('setInitialValue', controller.setInitialValue.bind(controller));
+      view.subscribe('showValue', ({ index, value, css, cssValue }) => {
+        viewThumb.showValue({ index, value, css, cssValue });
+        viewOptions.showValue({ index, value });
+      });
+      view.subscribe('updateThumbs', viewOptions.updateThumbs.bind(viewOptions));
+      view.subscribe('onInputChange', controller.onInputChange.bind(controller));
+      viewThumb.subscribe('onElemMouseDown', view.onElemMouseDown.bind(view));
+      viewOptions.subscribe('onInputChange', view.onInputChange.bind(view));
+      viewOptions.subscribe('update', update.bind(this));
+
+      controller.initPlugin();
+    }
+
+    let update = ({ prop, input }) => {
+      input = $(input);
+
+      if (!input.hasClass('slider__step')) {
+        input.val(Math.round(input.val() / options.step) * options.step);
+      }
+
+      this.find('.slider__thumb').remove();
+      this.find('.slider__tracker').remove();
+      this.find('.slider__scale').remove();
+
+      if (input.hasClass('slider__value')) {
+        let index = this.find('.slider__value').index(input);
+        options[prop][index] = input.val();
+      }
+      else if (input.parents('fieldset').hasClass('slider__inputs')) {
+        options[prop] = input.val();
+      }
+      else {
+        options[prop] = input.is(':checked');
+      }
+
+      init();
+    }
+
+    init();
   }
 })(jQuery);

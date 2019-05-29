@@ -1,3 +1,33 @@
 mixin slider(id)
   .slider(id="slider"+id)
     .slider__runner
+    form.slider__settings
+      fieldset.slider__checkboxes
+        label
+          input.slider__is-vertical(type="checkbox")
+          | Вертикальный
+        label
+          input.slider__has-interval(type="checkbox")
+          | Интервальный
+        label
+          input.slider__has-pointer(type="checkbox")
+          | С указателем
+        label
+          input.slider__has-scale(type="checkbox")
+          | Со шкалой
+      fieldset.slider__inputs
+        label
+          | Min
+          input.slider__min(type="number")
+        label
+          | Max
+          input.slider__max(type="number")
+        label
+          | Шаг
+          input.slider__step(type="number")
+        label
+          | Ползунок
+          input.slider__value.slider__value--first(type="number")
+        label
+          | Ползунок 2
+          input.slider__value.slider__value--second(type="number")
