@@ -1,9 +1,10 @@
 import View from '../src/js/components/View';
 import ViewThumb from '../src/js/components/ViewThumb';
 import ViewOptions from '../src/js/components/ViewOptions';
+import ViewScale from '../src/js/components/ViewScale';
 
 describe('Тесты для вью', function() {
-  let view, viewThumb, viewOptions, thumbElem,
+  let view, viewThumb, viewOptions, viewScale, thumbElem,
       fn = function() { return 'fn' };
 
   beforeEach(function() {
@@ -21,15 +22,21 @@ describe('Тесты для вью', function() {
       isVertical: false,
       hasInterval: true,
       hasPointer: false,
-      hasScale: false
+      hasScale: true
+    });
+
+    viewScale = new ViewScale({
+      isVertical: true,
+      hasInterval: true
     });
 
     view = new View({
       slider: $('#slider1'),
       isVertical: false,
-      hasScale: false,
+      hasScale: true,
       viewThumb,
-      viewOptions
+      viewOptions,
+      viewScale
     });
 
     view.pixelsPerValue = 2;
@@ -44,9 +51,9 @@ describe('Тесты для вью', function() {
     expect(view.slider).toHaveClass('slider');
     expect(view.elem).toHaveClass('slider__runner');
     expect(view.isVertical).toBeFalsy();
-    expect(view.hasScale).toBeFalsy();
     expect(view.viewThumb).toBe(viewThumb);
     expect(view.viewOptions).toBe(viewOptions);
+    expect(view.viewScale).toBe(viewScale);
   });
 
   it('init', function() {
@@ -55,18 +62,29 @@ describe('Тесты для вью', function() {
     spyOn(view.viewThumb, 'addThumbs');
     spyOn(view, 'getCoords');
     spyOn(view, 'publish');
+    spyOn(view.viewScale, 'createScale');
     let min = 10,
         max = 50,
         step = 5,
-        thumbElem = view.viewThumb.addThumbs();
+        thumbElem = view.viewThumb.getThumbElem();
     view.init({ min, max, step });
     expect(view.showOrientation).toHaveBeenCalled();
     expect(view.viewOptions.setInputs).toHaveBeenCalledWith({ min, max, step });
     expect(view.viewThumb.addThumbs).toHaveBeenCalled();
     expect(view.getCoords).toHaveBeenCalledWith({ min, max, thumbElem });
     expect(view.publish).toHaveBeenCalledWith('setInitialValue', thumbElem);
-    expect(view.elem.children()).toHaveClass('slider__scale');
-    expect(view.elem.find('.slider__scale').css('opacity')).toBe('0');
+    expect(view.viewScale.createScale).toHaveBeenCalledWith({
+      min,
+      max,
+      step,
+      pixelsPerValue: view.pixelsPerValue,
+      elem: view.elem,
+      thumbElem
+    });
+
+    view.viewScale = undefined;
+    view.init({ min, max, step });
+    expect(view.elem.css('marginTop')).toBe('12.8px');
   });
 
   it('showOrientation', function() {
@@ -163,5 +181,16 @@ describe('Тесты для вью', function() {
     view.onDocumentMouseUp(thumbElem.eq(0));
     expect($._data(document).events).not.toBeDefined();
     expect(view.publish).toHaveBeenCalledWith('updateThumbs', 0);
+  });
+
+  it('onClickScale', function() {
+    spyOn(view, 'publish');
+    let index = 1,
+        value = 50,
+        css = 'left',
+        cssValue = '50px';
+    view.onClickScale({ index, value, css, cssValue });
+    expect(view.publish).toHaveBeenCalledWith('showValue', { index, value, css, cssValue });
+    expect(view.publish).toHaveBeenCalledWith('updateThumbs', index);
   });
 });

@@ -16,9 +16,11 @@ describe('Тесты для ViewOptions', function() {
     };
 
     viewOptions = new ViewOptions(options);
+
     let min = 0,
         max = 200,
         step = 20;
+
     viewOptions.setInputs({ min, max, step });
   });
 
@@ -52,7 +54,7 @@ describe('Тесты для ViewOptions', function() {
     expect(viewOptions.inputsVal.eq(1).attr('min')).toBe(viewOptions.inputsVal.eq(0).val());
 
     expect($._data(viewOptions.inputsVal[0]).events.focusout).toBeDefined();
-    viewOptions.inputsVal.focusout();
+    viewOptions.inputsVal.eq(0).focusout();
     expect(viewOptions.onInputChange).toHaveBeenCalled();
     expect(viewOptions.updateInputs).toHaveBeenCalled();
   });

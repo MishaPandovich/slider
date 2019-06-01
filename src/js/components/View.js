@@ -7,34 +7,37 @@ class View extends Observer {
     this.slider = options.slider;
     this.elem = this.slider.find('.slider__runner');
     this.isVertical = options.isVertical;
-    this.hasScale = options.hasScale;
     this.viewThumb = options.viewThumb;
     this.viewOptions = options.viewOptions;
+    if (options.hasScale) {
+      this.viewScale = options.viewScale;
+    }
   }
 
   init({ min, max, step }) {
     this.showOrientation();
     this.viewOptions.setInputs({ min, max, step });
 
-    let thumbElem = this.viewThumb.addThumbs();
+    this.viewThumb.addThumbs();
+    let thumbElem = this.viewThumb.getThumbElem();
+
     this.getCoords({ min, max, thumbElem });
     this.publish('setInitialValue', thumbElem);
 
-    if (this.hasScale) {
-      let options = {
+    if (this.viewScale) {
+      this.viewScale.createScale({
         min,
         max,
         step,
-        isVertical: this.isVertical,
         pixelsPerValue: this.pixelsPerValue,
-        elem: this.elem
-      };
-      new ViewScale(options);
+        elem: this.elem,
+        thumbElem
+      });
     }
     else {
-      let ul = $('<ul class="slider__scale">');
-      this.elem.append(ul);
-      ul.css('opacity', 0);
+      if (!this.isVertical) {
+        this.elem.css('marginTop', '12.8px');
+      }
     }
   }
 
@@ -89,6 +92,11 @@ class View extends Observer {
     $(document).off('mouseup');
 
     this.publish('updateThumbs', elem.index());
+  }
+
+  onClickScale({ index, value, css, cssValue }) {
+    this.publish('showValue', { index, value, css, cssValue });
+    this.publish('updateThumbs', index);
   }
 }
 

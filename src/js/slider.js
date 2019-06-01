@@ -2,6 +2,7 @@ import Model from './components/Model';
 import View from './components/View';
 import ViewThumb from './components/ViewThumb';
 import ViewOptions from './components/ViewOptions';
+import ViewScale from './components/ViewScale';
 import Controller from './components/Controller';
 
 (function($) {
@@ -47,12 +48,20 @@ import Controller from './components/Controller';
         hasScale: options.hasScale
       });
 
+      const viewScale = new ViewScale({
+        isVertical: options.isVertical,
+        hasInterval: options.hasInterval
+      });
+
       const view = new View({
         slider: this,
         isVertical: options.isVertical,
+        hasInterval: options.hasInterval,
+        hasPointer: options.hasPointer,
         hasScale: options.hasScale,
         viewThumb,
-        viewOptions
+        viewOptions,
+        viewScale
       });
 
       const controller = new Controller({ model, view });
@@ -69,6 +78,7 @@ import Controller from './components/Controller';
       viewThumb.subscribe('onElemMouseDown', view.onElemMouseDown.bind(view));
       viewOptions.subscribe('onInputChange', view.onInputChange.bind(view));
       viewOptions.subscribe('update', update.bind(this));
+      viewScale.subscribe('onClickScale', view.onClickScale.bind(view));
 
       controller.initPlugin();
     }

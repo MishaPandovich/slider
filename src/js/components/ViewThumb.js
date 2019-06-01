@@ -26,8 +26,6 @@ class ViewThumb extends Observer {
 
     this.elem.append($('<div class="slider__tracker">'));
     this.tracker = this.elem.find('.slider__tracker');
-
-    return this.thumbElem;
   }
 
   createThumb(modifier='first') {
@@ -41,6 +39,10 @@ class ViewThumb extends Observer {
       isVertical: this.isVertical,
       thumbElem: this.thumbElem
     });
+  }
+
+  getThumbElem() {
+    return this.thumbElem;
   }
 
   showValue({ index, value, css, cssValue }) {

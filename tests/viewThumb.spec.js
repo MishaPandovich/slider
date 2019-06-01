@@ -41,7 +41,7 @@ describe('Тесты для ViewThumb', function() {
     expect(viewThumb.tracker.parent()).toHaveClass('slider__runner');
 
     expect($._data(viewThumb.thumbElem[0]).events.mousedown).toBeDefined();
-    viewThumb.thumbElem.mousedown();
+    viewThumb.thumbElem.eq(0).mousedown();
     expect(viewThumb.onElemMouseDown).toHaveBeenCalled();
   });
 
@@ -54,6 +54,11 @@ describe('Тесты для ViewThumb', function() {
     viewThumb.addPointers(viewThumb.isVertical);
     expect(viewThumb.viewPointer).toBeDefined();
     expect(viewThumb.thumbElem.children()).toHaveClass('slider__pointer');
+  });
+
+  it('getThumbElem', function() {
+    let fn = viewThumb.getThumbElem();
+    expect(fn).toBe(viewThumb.thumbElem);
   });
 
   it('showValue', function() {
