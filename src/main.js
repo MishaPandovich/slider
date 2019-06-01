@@ -16,3 +16,13 @@ $('#slider2').mySlider({
   step: 15,
   isVertical: true
 });
+
+$('#slider3').mySlider({
+  min: 13,
+  max: 120,
+  current: [36, 48],
+  step: 4,
+  hasInterval: true,
+  hasPointer: false,
+  hasScale: false
+});
