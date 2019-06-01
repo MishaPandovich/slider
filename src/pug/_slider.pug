@@ -18,13 +18,13 @@ mixin slider(id)
       fieldset.slider__inputs
         label
           | Min
-          input.slider__min(type="number")
+          input.slider__min(type="number" min="0")
         label
           | Max
-          input.slider__max(type="number")
+          input.slider__max(type="number" min="0")
         label
           | Шаг
-          input.slider__step(type="number")
+          input.slider__step(type="number" min="1")
         label
           | Ползунок
           input.slider__value.slider__value--first(type="number")
