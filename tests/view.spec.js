@@ -1,7 +1,7 @@
-import View from '../src/js/components/View';
-import ViewThumb from '../src/js/components/ViewThumb';
-import ViewOptions from '../src/js/components/ViewOptions';
-import ViewScale from '../src/js/components/ViewScale';
+import View from '../src/js/View';
+import ViewThumb from '../src/js/ViewThumb';
+import ViewOptions from '../src/js/ViewOptions';
+import ViewScale from '../src/js/ViewScale';
 
 describe('Тесты для вью', function() {
   let view, viewThumb, viewOptions, viewScale, thumbElem,

@@ -50,8 +50,6 @@ class ViewOptions extends Observer {
     inputStep.on('focusout', this.updateInputs.bind(this, 'step'));
     this.inputsVal.on('focusout', this.onInputChange.bind(this));
     this.inputsVal.on('focusout', this.updateInputs.bind(this, 'current'));
-
-    return this.inputsVal;
   }
 
   updateThumbs(index) {

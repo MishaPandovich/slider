@@ -1,4 +1,4 @@
-import ViewOptions from '../src/js/components/ViewOptions';
+import ViewOptions from '../src/js/ViewOptions';
 
 describe('Тесты для ViewOptions', function() {
   let viewOptions, options,

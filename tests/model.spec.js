@@ -1,4 +1,4 @@
-import Model from '../src/js/components/Model';
+import Model from '../src/js/Model';
 
 describe('Тесты для модели', function() {
   let model;

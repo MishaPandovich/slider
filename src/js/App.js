@@ -1,9 +1,9 @@
-import Model from './components/Model';
-import View from './components/View';
-import ViewThumb from './components/ViewThumb';
-import ViewOptions from './components/ViewOptions';
-import ViewScale from './components/ViewScale';
-import Controller from './components/Controller';
+import Model from './Model';
+import View from './View';
+import ViewThumb from './ViewThumb';
+import ViewOptions from './ViewOptions';
+import ViewScale from './ViewScale';
+import Controller from './Controller';
 
 (function($) {
   $.fn.mySlider = function(options={}) {

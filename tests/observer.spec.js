@@ -1,4 +1,4 @@
-import Observer from '../src/js/components/Observer';
+import Observer from '../src/js/Observer';
 
 describe('Тесты для обсервера', function() {
   beforeEach(function() {

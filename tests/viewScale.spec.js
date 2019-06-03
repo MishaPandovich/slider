@@ -1,4 +1,4 @@
-import ViewScale from '../src/js/components/ViewScale';
+import ViewScale from '../src/js/ViewScale';
 
 describe('Тесты для ViewScale', function() {
   let viewScale, options;

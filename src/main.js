@@ -1,5 +1,5 @@
 import './main.scss';
-import './js/slider.js';
+import './js/App.js';
 
 $('#slider1').mySlider({
   min: 9,

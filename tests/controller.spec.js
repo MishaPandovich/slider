@@ -1,6 +1,6 @@
-import Model from '../src/js/components/Model';
-import View from '../src/js/components/View';
-import Controller from '../src/js/components/Controller';
+import Model from '../src/js/Model';
+import View from '../src/js/View';
+import Controller from '../src/js/Controller';
 
 describe('Тесты для контроллера', function() {
   let model = new Model({

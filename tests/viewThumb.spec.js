@@ -1,4 +1,4 @@
-import ViewThumb from '../src/js/components/ViewThumb';
+import ViewThumb from '../src/js/ViewThumb';
 
 describe('Тесты для ViewThumb', function() {
   let viewThumb, options,

@@ -1,4 +1,4 @@
-import ViewPointer from '../src/js/components/ViewPointer';
+import ViewPointer from '../src/js/ViewPointer';
 
 describe('Тесты для ViewPointer', function() {
   let viewPointer, options;
