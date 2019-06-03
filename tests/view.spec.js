@@ -26,6 +26,7 @@ describe('Тесты для вью', function() {
     });
 
     viewScale = new ViewScale({
+      elem: $('.slider__runner'),
       isVertical: true,
       hasInterval: true
     });
@@ -78,7 +79,6 @@ describe('Тесты для вью', function() {
       max,
       step,
       pixelsPerValue: view.pixelsPerValue,
-      elem: view.elem,
       thumbElem
     });
 

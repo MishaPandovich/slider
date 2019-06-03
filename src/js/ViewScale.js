@@ -1,13 +1,14 @@
 import Observer from './Observer';
 
 class ViewScale extends Observer {
-  constructor({ isVertical, hasInterval }) {
+  constructor({ elem, isVertical, hasInterval }) {
     super();
+    this.elem = elem;
     this.isVertical = isVertical;
     this.hasInterval = hasInterval;
   }
 
-  createScale({ min, max, step, pixelsPerValue, elem, thumbElem }) {
+  createScale({ min, max, step, pixelsPerValue, thumbElem }) {
     let ul,
         css,
         value = min,
@@ -37,7 +38,7 @@ class ViewScale extends Observer {
       li.on('click', this.onClickScale.bind(this, thumbElem));
     }
 
-    elem.append(ul);
+    this.elem.append(ul);
   }
 
   onClickScale(thumbElem, e) {

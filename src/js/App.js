@@ -49,6 +49,7 @@ import Controller from './Controller';
       });
 
       const viewScale = new ViewScale({
+        elem: this.find('.slider__runner'),
         isVertical: options.isVertical,
         hasInterval: options.hasInterval
       });
@@ -56,12 +57,9 @@ import Controller from './Controller';
       const view = new View({
         slider: this,
         isVertical: options.isVertical,
-        hasInterval: options.hasInterval,
-        hasPointer: options.hasPointer,
-        hasScale: options.hasScale,
         viewThumb,
         viewOptions,
-        viewScale
+        viewScale: options.hasScale ? viewScale : undefined
       });
 
       const controller = new Controller({ model, view });

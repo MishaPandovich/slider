@@ -12,17 +12,16 @@ describe('Тесты для ViewPointer', function() {
     };
 
     viewPointer = new ViewPointer(options);
+    viewPointer.createPointer();
   });
 
   it('constructor', function() {
-    spyOn(viewPointer, 'createPointer');
-    viewPointer.constructor(options);
+    expect(viewPointer.isVertical).toBe(options.isVertical);
     expect(viewPointer.thumbElem).toBe(options.thumbElem);
-    expect(viewPointer.createPointer).toHaveBeenCalledWith(options.isVertical);
   });
 
   it('createPointer', function() {
-    viewPointer.createPointer(options.isVertical);
+    viewPointer.createPointer();
     expect(viewPointer.thumbElem.children()).toHaveClass('slider__pointer');
   });
 

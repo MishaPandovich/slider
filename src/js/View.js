@@ -1,4 +1,3 @@
-import ViewScale from './ViewScale';
 import Observer from './Observer';
 
 class View extends Observer {
@@ -9,9 +8,7 @@ class View extends Observer {
     this.isVertical = options.isVertical;
     this.viewThumb = options.viewThumb;
     this.viewOptions = options.viewOptions;
-    if (options.hasScale) {
-      this.viewScale = options.viewScale;
-    }
+    this.viewScale = options.viewScale;
   }
 
   init({ min, max, step }) {
@@ -30,14 +27,11 @@ class View extends Observer {
         max,
         step,
         pixelsPerValue: this.pixelsPerValue,
-        elem: this.elem,
         thumbElem
       });
     }
     else {
-      if (!this.isVertical) {
-        this.elem.css('marginTop', '12.8px');
-      }
+      this.elem.css('marginTop', '12.8px');
     }
   }
 

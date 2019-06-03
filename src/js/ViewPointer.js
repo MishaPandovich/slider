@@ -1,11 +1,11 @@
 class ViewPointer {
   constructor({ isVertical, thumbElem }) {
+    this.isVertical = isVertical;
     this.thumbElem = thumbElem;
-    this.createPointer(isVertical);
   }
 
-  createPointer(isVertical) {
-    let pointer = !isVertical ? '<div class="slider__pointer">' : '<div class="slider__pointer slider__pointer--left">';
+  createPointer() {
+    let pointer = !this.isVertical ? '<div class="slider__pointer">' : '<div class="slider__pointer slider__pointer--left">';
     this.thumbElem.append($(pointer));
   }
 

@@ -7,6 +7,7 @@ describe('Тесты для ViewScale', function() {
     setFixtures('<div id="slider1" class="slider"><div class="slider__runner"><div class="slider__thumb"></div><div class="slider__thumb"></div></div></div>');
 
     options = {
+      elem: $('#slider1').find('.slider__runner'),
       isVertical: false,
       hasInterval: true
     };
@@ -16,6 +17,7 @@ describe('Тесты для ViewScale', function() {
 
   it('constructor', function() {
     expect(viewScale.subscribers.any).toBeDefined();
+    expect(viewScale.elem).toBe(options.elem);
     expect(viewScale.isVertical).toBe(options.isVertical);
     expect(viewScale.hasInterval).toBe(options.hasInterval);
   });
@@ -26,12 +28,11 @@ describe('Тесты для ViewScale', function() {
       max = 50,
       step = 5,
       pixelsPerValue = 2,
-      elem = $('#slider1').find('.slider__runner'),
-      thumbElem = elem.find('.slider__thumb');
-    viewScale.createScale({ min, max, step, pixelsPerValue, elem, thumbElem });
-    expect(elem.children()).toHaveClass('slider__scale');
+      thumbElem = viewScale.elem.find('.slider__thumb');
+    viewScale.createScale({ min, max, step, pixelsPerValue, thumbElem });
+    expect(viewScale.elem.children()).toHaveClass('slider__scale');
 
-    let li = elem.find('.slider__scale-item');
+    let li = viewScale.elem.find('.slider__scale-item');
     expect($._data(li[0]).events.click).toBeDefined();
     li.eq(0).click();
     expect(viewScale.onClickScale).toHaveBeenCalled();
@@ -43,11 +44,10 @@ describe('Тесты для ViewScale', function() {
       max = 50,
       step = 5,
       pixelsPerValue = 2,
-      elem = $('#slider1').find('.slider__runner'),
-      thumbElem = elem.find('.slider__thumb');
-    viewScale.createScale({ min, max, step, pixelsPerValue, elem, thumbElem });
+      thumbElem = viewScale.elem.find('.slider__thumb');
+    viewScale.createScale({ min, max, step, pixelsPerValue, thumbElem });
 
-    let li = elem.find('.slider__scale-item')[0];
+    let li = viewScale.elem.find('.slider__scale-item')[0];
     li.innerHTML = '30';
     li.style.left = '120px';
 

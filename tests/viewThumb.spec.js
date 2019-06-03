@@ -1,4 +1,5 @@
 import ViewThumb from '../src/js/ViewThumb';
+import ViewPointer from '../src/js/ViewPointer';
 
 describe('Тесты для ViewThumb', function() {
   let viewThumb, options,
@@ -30,12 +31,11 @@ describe('Тесты для ViewThumb', function() {
 
   it('addThumbs', function() {
     spyOn(viewThumb, 'createThumb');
-    spyOn(viewThumb, 'addPointers');
     spyOn(viewThumb, 'onElemMouseDown');
     viewThumb.addThumbs();
     expect(viewThumb.createThumb).toHaveBeenCalled();
     expect(viewThumb.createThumb).toHaveBeenCalledWith('second');
-    expect(viewThumb.addPointers).toHaveBeenCalled();
+    expect(viewThumb.viewPointer instanceof ViewPointer).toBeTruthy();
     expect(viewThumb.thumbElem).toHaveClass('slider__thumb');
     expect(viewThumb.tracker).toHaveClass('slider__tracker');
     expect(viewThumb.tracker.parent()).toHaveClass('slider__runner');
@@ -51,9 +51,8 @@ describe('Тесты для ViewThumb', function() {
   });
 
   it('addPointers', function() {
-    viewThumb.addPointers(viewThumb.isVertical);
-    expect(viewThumb.viewPointer).toBeDefined();
-    expect(viewThumb.thumbElem.children()).toHaveClass('slider__pointer');
+    let fn = viewThumb.addPointers();
+    expect(fn instanceof ViewPointer).toBeTruthy();
   });
 
   it('getThumbElem', function() {

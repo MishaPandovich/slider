@@ -1,4 +1,4 @@
-import ViewPointer from './ViewPointer.js';
+import ViewPointer from './ViewPointer';
 import Observer from './Observer';
 
 class ViewThumb extends Observer {
@@ -21,7 +21,7 @@ class ViewThumb extends Observer {
     this.thumbElem.on('mousedown', this.onElemMouseDown.bind(this));
 
     if (this.hasPointer) {
-      this.addPointers();
+      this.viewPointer = this.addPointers();
     }
 
     this.elem.append($('<div class="slider__tracker">'));
@@ -35,10 +35,12 @@ class ViewThumb extends Observer {
   }
 
   addPointers() {
-    this.viewPointer = new ViewPointer({
+    let viewPointer = new ViewPointer({
       isVertical: this.isVertical,
       thumbElem: this.thumbElem
     });
+    viewPointer.createPointer();
+    return viewPointer;
   }
 
   getThumbElem() {
