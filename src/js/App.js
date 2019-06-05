@@ -10,8 +10,8 @@ import Controller from './Controller';
     options = $.extend({
       min: 0,
       max: 100,
-      current: [0, 10],
       step: 1,
+      current: [0, 10],
       isVertical: false,
       hasInterval: false,
       hasPointer: true,
@@ -21,7 +21,7 @@ import Controller from './Controller';
     if (!$.isArray(options.current)) {
       options.current = [options.current, options.current];
     }
-    else if (options.current.length === 1) {
+    if (options.current.length === 1) {
       options.current[1] = options.current[0];
     }
 
@@ -29,8 +29,8 @@ import Controller from './Controller';
       const model = new Model({
         min: options.min,
         max: options.max,
-        current: options.current,
-        step: options.step
+        step: options.step,
+        current: options.current
       });
 
       const viewThumb = new ViewThumb({
