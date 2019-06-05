@@ -16,21 +16,16 @@ module.exports = function(config) {
       webpack, 
       'karma-jasmine',
       'karma-jasmine-jquery',
-      'karma-chrome-launcher',
-      'karma-coverage'
+      'karma-chrome-launcher'
     ],
 
     preprocessors: {
-      'src/js/components/*.js': ['webpack', 'coverage'],
+      'src/js/components/*.js': ['webpack'],
       'src/*.scss': ['webpack'],
       'tests/*spec.js': ['webpack']
     },
 
-    reporters: ['progress', 'coverage'],
-    coverageReporter: {
-      type : 'html',
-      dir : 'test-coverage/'
-    },
+    reporters: ['progress'],
     port: 9876,
     colors: false,
     logLevel: config.LOG_INFO,
@@ -40,7 +35,6 @@ module.exports = function(config) {
     autoWatchBatchDelay: 300,
 
     webpack: webpackConfig,
-
     webpackMiddleware: {
       noInfo: true
     },
